@@ -14,30 +14,42 @@
     margin: 0;
     text-align: center;
   }
+
   header {
     background: #2b7bba;
     color: white;
     padding: 16px 10px;
     font-size: 22px;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
   }
+
   main {
     padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
   }
+
   button.marca-btn {
     font-size: 18px;
     padding: 12px 20px;
-    margin: 8px;
     border-radius: 8px;
     border: none;
     background-color: #25d366;
     color: white;
     cursor: pointer;
-    min-width: 150px;
+    min-width: 180px; /* todos do mesmo tamanho */
+    font-weight: bold;
+    transition: transform 0.1s;
+  }
+
+  button.marca-btn:hover {
+    transform: scale(1.05);
+  }
+
+  button.marca-todas {
+    background-color: #ff9900; /* destaque especial para "Todas" */
   }
 </style>
 </head>
@@ -45,7 +57,7 @@
 
 <header>Escolha a Marca</header>
 <main>
-  <button class="marca-btn" onclick="abrirCatalogo('todos')">Todas</button>
+  <button class="marca-btn marca-todas" onclick="abrirCatalogo('todos')">Todas</button>
   <button class="marca-btn" onclick="abrirCatalogo('Danone')">Danone</button>
   <button class="marca-btn" onclick="abrirCatalogo('Iogurte Kremoso')">Iogurte Kremoso</button>
   <button class="marca-btn" onclick="abrirCatalogo('Pudim Rebeka')">Pudim Rebeka</button>
