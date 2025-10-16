@@ -1,7 +1,7 @@
 [
-{"codigo":"P001","descricao":"Produto 1","valor":10.00,"imagem":"https://via.placeholder.com/120"},
-{"codigo":"P002","descricao":"Produto 2","valor":10.00,"imagem":"https://via.placeholder.com/120"},
-{"codigo":"P003","descricao":"Produto 3","valor":10.00,"imagem":"https://via.placeholder.com/120"},
+{"codigo":"129","Danette Chocolate 360g":"Produto 1","valor":10.00,"imagem":"https://i.imgur.com/u3nokqV.png"},
+{"codigo":"64","Danette Branco 360g":"Produto 2","valor":10.00,"imagem":"https://imgur.com/INZwUxs.png"},
+{"codigo":"142","Danette Chocolate 540g":"Produto 3","valor":10.00,"imagem":"https://imgur.com/KD2iEfV.png"},
 {"codigo":"P004","descricao":"Produto 4","valor":10.00,"imagem":"https://via.placeholder.com/120"},
 {"codigo":"P005","descricao":"Produto 5","valor":10.00,"imagem":"https://via.placeholder.com/120"},
 {"codigo":"P006","descricao":"Produto 6","valor":10.00,"imagem":"https://via.placeholder.com/120"},
@@ -112,3 +112,4 @@
 {"codigo":"P111","descricao":"Produto 111","valor":10.00,"imagem":"https://via.placeholder.com/120"},
 {"codigo":"P112","descricao":"Produto 112","valor":10.00,"imagem":"https://via.placeholder.com/120"},
 {"codigo":"P113","descricao":"Produto 113","
+
