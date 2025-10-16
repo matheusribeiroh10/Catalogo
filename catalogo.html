@@ -2,54 +2,53 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta 
-  name="viewport" 
-  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f7f7f7;
-    text-align: center;
   }
 
   header {
-    background: #2b7bba;
-    color: white;
-    padding: 12px;
-    font-size: 20px;
-    font-weight: bold;
-    position: sticky;
-    top: 0;
-    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #2b7bba;
+    color: white;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  #titulo-catalogo {
+    display: flex;
+    flex-direction: column;
   }
 
   #total {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  button {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
     font-size: 16px;
     font-weight: bold;
-  }
-
-  header button {
-    padding: 8px 12px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: none;
     cursor: pointer;
-    font-weight: bold;
   }
 
-  #enviarBtn {
-    background-color: #25d366;
+  #voltar {
+    background: #ff5e5e;
     color: white;
   }
 
-  #voltarBtn {
-    background-color: #ff5c5c;
+  #enviar {
+    background: #25d366;
     color: white;
   }
 
@@ -58,7 +57,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 12px;
-    max-width: 700px;
+    max-width: 900px;
     margin: auto;
   }
 
@@ -67,11 +66,16 @@
     border-radius: 12px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .produto img {
     width: 100%;
     border-radius: 10px;
+    max-height: 120px;
+    object-fit: contain;
   }
 
   .qtd-container {
@@ -100,17 +104,30 @@
     border-radius: 6px;
     pointer-events: none;
   }
+
+  .produto div {
+    margin: 4px 0;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  @media (max-width: 600px) {
+    #produtos-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <button id="voltarBtn" onclick="voltar()">⬅ Marcas</button>
-  <div>
-    Catálogo Digital<br>
-    <span id="total">Total: R$ 0,00</span>
+  <button id="voltar" onclick="voltarMarcas()">⬅ Marcas</button>
+  <div id="titulo-catalogo">
+    <div>Catálogo Digital</div>
+    <div id="marcaSelecionada">Todas as Marcas</div>
+    <div id="total">Total: R$ 0,00</div>
   </div>
-  <button id="enviarBtn" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
+  <button id="enviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
 </header>
 
 <div id="produtos-container"></div>
@@ -119,6 +136,8 @@
 async function carregarProdutos() {
   const params = new URLSearchParams(window.location.search);
   const marcaSelecionada = params.get("marca") || "todos";
+  document.getElementById("marcaSelecionada").innerText = 
+    marcaSelecionada === "todos" ? "Todas as Marcas" : marcaSelecionada;
 
   const response = await fetch('produtos.json');
   const produtos = await response.json();
@@ -130,7 +149,9 @@ async function carregarProdutos() {
   const container = document.getElementById('produtos-container');
   container.innerHTML = '';
 
-  filtrados.forEach((p, i) => {
+  // Ajuste de largura igual para todos os botões de quantidade
+  let larguraMaior = 0;
+  filtrados.forEach(p => {
     const div = document.createElement('div');
     div.className = 'produto';
     div.innerHTML = `
@@ -140,30 +161,44 @@ async function carregarProdutos() {
       <div>${p.marca}</div>
       <div>R$ ${p.valor.toFixed(2)}</div>
       <div class="qtd-container">
-        <button onclick="alterarQtd(${i}, -1)">−</button>
-        <input type="text" id="qtd${i}" value="0" readonly>
-        <button onclick="alterarQtd(${i}, 1)">+</button>
+        <button>-</button>
+        <input type="text" value="0" readonly>
+        <button>+</button>
       </div>
     `;
     container.appendChild(div);
+    const btns = div.querySelectorAll(".qtd-container button");
+    btns.forEach(b => {
+      if (b.offsetWidth > larguraMaior) larguraMaior = b.offsetWidth;
+    });
+  });
+
+  // Ajusta todos os botões para a mesma largura
+  container.querySelectorAll(".qtd-container button").forEach(b => b.style.width = `${larguraMaior}px`);
+
+  // adiciona eventos de clique
+  container.querySelectorAll(".qtd-container").forEach((qtdDiv, i) => {
+    const input = qtdDiv.querySelector("input");
+    const [btnMenos, btnMais] = qtdDiv.querySelectorAll("button");
+    btnMais.onclick = () => alterarQtd(input, filtrados[i].valor);
+    btnMenos.onclick = () => alterarQtd(input, filtrados[i].valor, -1);
   });
 
   window.produtos = filtrados;
 }
 
-function alterarQtd(i, delta) {
-  const input = document.getElementById(`qtd${i}`);
-  let valor = parseInt(input.value) + delta;
-  if (valor < 0) valor = 0;
-  input.value = valor;
+function alterarQtd(input, valorProduto, delta = 1) {
+  let qtd = parseInt(input.value) + delta;
+  if (qtd < 0) qtd = 0;
+  input.value = qtd;
   calcularTotal();
 }
 
 function calcularTotal() {
   let total = 0;
-  window.produtos.forEach((p, i) => {
-    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
-    total += qtd * p.valor;
+  document.querySelectorAll("#produtos-container .produto").forEach((div, i) => {
+    const qtd = parseInt(div.querySelector("input").value);
+    total += qtd * window.produtos[i].valor;
   });
   document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
 }
@@ -171,23 +206,22 @@ function calcularTotal() {
 function enviarWhatsApp() {
   let mensagem = "🛒 *Pedido:*\n";
   let total = 0;
-
-  window.produtos.forEach((p, i) => {
-    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
+  document.querySelectorAll("#produtos-container .produto").forEach((div, i) => {
+    const qtd = parseInt(div.querySelector("input").value);
     if (qtd > 0) {
+      const p = window.produtos[i];
       mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
       total += qtd * p.valor;
     }
   });
-
   mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
   const telefone = "5519992394899";
   const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
   window.open(url, "_blank");
 }
 
-function voltar() {
-  window.location.href = "index.html";
+function voltarMarcas() {
+  window.location.href = "marcas.html";
 }
 
 carregarProdutos();
