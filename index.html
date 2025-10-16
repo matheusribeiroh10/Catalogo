@@ -1,9 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Digital</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 10px; background: #f5f5f5; }
+  h1 { text-align: center; font-size: 24px; margin-bottom: 15px; }
+  .total-container { text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 20px; }
+  .produtos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .produto { background: white; border-radius: 8px; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .produto img { width: 120px; height: 120px; object-fit: contain; margin-bottom: 10px; }
+  .produto div { margin: 5px 0; }
+  .qtd-container { display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 5px; }
+  .qtd-container button { padding: 5px 10px; font-size: 16px; cursor: pointer; }
+  .qtd-container input { width: 40px; text-align: center; }
+  button#enviar { display: block; margin: 20px auto; padding: 12px 20px; background-color: #25D366; color: white; border: none; cursor: pointer; border-radius: 8px; font-size: 16px; }
+  button#enviar:hover { background-color: #1ebe57; }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+      .produtos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .produto img { width: 100px; height: 100px; }
+  }
+  @media (max-width: 480px) {
+      .produtos-grid { grid-template-columns: 1fr; }
+      .produto img { width: 80px; height: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Catálogo Digital</h1>
+
+<div class="total-container">
+  Total: R$ <span id="total">0,00</span>
+</div>
+
+<div class="produtos-grid" id="produtos-container"></div>
+
+<button id="enviar" onclick="enviarWhatsApp()">Enviar Pedido via WhatsApp</button>
+
 <script>
+// Carregar produtos do JSON
 async function carregarProdutos() {
     const response = await fetch('produtos.json');
     const produtos = await response.json();
-
     const container = document.getElementById('produtos-container');
+
     produtos.forEach((p, i) => {
         const div = document.createElement('div');
         div.className = 'produto';
@@ -21,9 +65,45 @@ async function carregarProdutos() {
         container.appendChild(div);
     });
 
-    window.produtos = produtos; // salva global para total e WhatsApp
+    window.produtos = produtos;
 }
 
-// Funções alterarQtd, calcularTotal e enviarWhatsApp permanecem iguais
+// Alterar quantidade
+function alterarQtd(i, valor) {
+    const input = document.getElementById(`qtd${i}`);
+    let qtd = parseInt(input.value) || 0;
+    qtd += valor;
+    if (qtd < 0) qtd = 0;
+    input.value = qtd;
+    calcularTotal();
+}
+
+// Calcular total
+function calcularTotal() {
+    let total = 0;
+    window.produtos.forEach((p, i) => {
+        const qtd = parseInt(document.getElementById(`qtd${i}`).value) || 0;
+        total += qtd * p.valor;
+    });
+    document.getElementById('total').textContent = total.toFixed(2);
+}
+
+// Enviar pedido via WhatsApp
+function enviarWhatsApp() {
+    let mensagem = 'Pedido:%0A';
+    window.produtos.forEach((p, i) => {
+        const qtd = parseInt(document.getElementById(`qtd${i}`).value) || 0;
+        if (qtd > 0){
+            mensagem += `${p.codigo} - ${p.descricao}: ${qtd} unidades%0A`;
+        }
+    });
+    mensagem += `Total: R$ ${document.getElementById('total').textContent}`;
+    window.open(`https://wa.me/5519992394899?text=${mensagem}`, '_blank');
+}
+
+// Inicializa
 carregarProdutos();
 </script>
+
+</body>
+</html>
