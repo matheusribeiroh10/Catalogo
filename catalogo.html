@@ -24,11 +24,33 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   #total {
     font-size: 16px;
     font-weight: bold;
+  }
+
+  header button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  #enviarBtn {
+    background-color: #25d366;
+    color: white;
+  }
+
+  #voltarBtn {
+    background-color: #ff5c5c;
+    color: white;
   }
 
   #produtos-container {
@@ -78,45 +100,25 @@
     border-radius: 6px;
     pointer-events: none;
   }
-
-  button#enviar {
-    background: #25d366;
-    color: white;
-    border: none;
-    padding: 14px 25px;
-    font-size: 18px;
-    border-radius: 10px;
-    margin: 20px auto;
-    display: block;
-  }
-
-  a.voltar {
-    display: block;
-    margin-top: 10px;
-    color: #2b7bba;
-    text-decoration: none;
-  }
 </style>
 </head>
 <body>
 
 <header>
-  Catálogo Digital
-  <div id="marcaSelecionada"></div>
-  <div id="total">Total: R$ 0,00</div>
+  <button id="voltarBtn" onclick="voltar()">⬅ Marcas</button>
+  <div>
+    Catálogo Digital<br>
+    <span id="total">Total: R$ 0,00</span>
+  </div>
+  <button id="enviarBtn" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
 </header>
 
 <div id="produtos-container"></div>
 
-<button id="enviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
-<a href="index.html" class="voltar">⬅ Voltar para marcas</a>
-
 <script>
 async function carregarProdutos() {
   const params = new URLSearchParams(window.location.search);
-  const marcaSelecionada = params.get("marca");
-  document.getElementById("marcaSelecionada").innerText = 
-    marcaSelecionada === "todos" ? "Todas as Marcas" : marcaSelecionada;
+  const marcaSelecionada = params.get("marca") || "todos";
 
   const response = await fetch('produtos.json');
   const produtos = await response.json();
@@ -173,7 +175,7 @@ function enviarWhatsApp() {
   window.produtos.forEach((p, i) => {
     const qtd = parseInt(document.getElementById(`qtd${i}`).value);
     if (qtd > 0) {
-      mensagem += `• ${p.descricao} (${p.codigo}) - ${qtd} un.\n`;
+      mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
       total += qtd * p.valor;
     }
   });
@@ -182,6 +184,10 @@ function enviarWhatsApp() {
   const telefone = "5519992394899";
   const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
   window.open(url, "_blank");
+}
+
+function voltar() {
+  window.location.href = "index.html";
 }
 
 carregarProdutos();
