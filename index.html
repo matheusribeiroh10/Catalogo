@@ -1,203 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta 
-    name="viewport" 
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  >
-  <title>Catálogo Digital</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-      text-align: center;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-      touch-action: manipulation;
-    }
+<meta charset="UTF-8">
+<meta 
+  name="viewport" 
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+<title>Catálogo Digital</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f7f7f7;
+    text-align: center;
+  }
 
-    header {
-      background: #2b7bba;
-      color: white;
-      padding: 12px;
-      font-size: 20px;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+  header {
+    background: #2b7bba;
+    color: white;
+    padding: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-    #total {
-      margin-top: 8px;
-      font-size: 16px;
-      font-weight: bold;
-    }
+  #total {
+    font-size: 16px;
+    font-weight: bold;
+  }
 
-    /* Contêiner principal do catálogo */
-    #produtos-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 12px;
-      max-width: 700px;       /* largura máxima no computador */
-      margin: auto;            /* centraliza */
-    }
+  #produtos-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+    max-width: 700px;
+    margin: auto;
+  }
 
-    /* Produto individual */
-    .produto {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 10px;
-      transition: 0.2s;
-    }
-    .produto:hover {
-      transform: scale(1.02);
-    }
-    .produto img {
-      width: 100%;
-      border-radius: 10px;
-    }
+  .produto {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 10px;
+  }
 
-    .qtd-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 5px;
-    }
+  .produto img {
+    width: 100%;
+    border-radius: 10px;
+  }
 
-    .qtd-container button {
-      width: 28px;
-      height: 28px;
-      border: none;
-      border-radius: 6px;
-      background: #2b7bba;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      touch-action: manipulation;
-    }
+  .qtd-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+  }
 
-    .qtd-container input {
-      width: 40px;
-      text-align: center;
-      margin: 0 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-      pointer-events: none; /* impede foco */
-      touch-action: none;
-    }
+  .qtd-container button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: #2b7bba;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-    button#enviar {
-      background: #25d366;
-      color: white;
-      border: none;
-      padding: 14px 25px;
-      font-size: 18px;
-      border-radius: 10px;
-      margin: 20px auto;
-      display: block;
-      font-weight: bold;
-      touch-action: manipulation;
-    }
+  .qtd-container input {
+    width: 40px;
+    text-align: center;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    pointer-events: none;
+  }
 
-    /* 🧱 Responsividade */
-    @media (max-width: 500px) {
-      #produtos-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+  button#enviar {
+    background: #25d366;
+    color: white;
+    border: none;
+    padding: 14px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    margin: 20px auto;
+    display: block;
+  }
 
-    @media (min-width: 900px) {
-      #produtos-container {
-        grid-template-columns: repeat(3, 1fr); /* se quiser 3 colunas no PC */
-      }
-    }
-  </style>
+  a.voltar {
+    display: block;
+    margin-top: 10px;
+    color: #2b7bba;
+    text-decoration: none;
+  }
+
+</style>
 </head>
 <body>
-  <header>
-    Catálogo Digital
-    <div id="total">Total: R$ 0,00</div>
-  </header>
 
-  <div id="produtos-container"></div>
+<header>
+  Catálogo Digital
+  <div id="marcaSelecionada"></div>
+  <div id="total">Total: R$ 0,00</div>
+</header>
 
-  <button id="enviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
+<div id="produtos-container"></div>
 
-  <script>
-    async function carregarProdutos() {
-      const response = await fetch('produtos.json');
-      const produtos = await response.json();
+<button id="enviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
+<a href="index.html" class="voltar">⬅ Voltar para marcas</a>
 
-      const container = document.getElementById('produtos-container');
-      produtos.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.className = 'produto';
-        div.innerHTML = `
-          <img src="${p.imagem}" alt="${p.descricao}">
-          <div><strong>${p.descricao}</strong></div>
-          <div>(${p.codigo})</div>
-          <div>R$ ${p.valor.toFixed(2)}</div>
-          <div class="qtd-container">
-            <button onclick="alterarQtd(${i}, -1)">−</button>
-            <input type="text" id="qtd${i}" value="0" readonly>
-            <button onclick="alterarQtd(${i}, 1)">+</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
+<script>
+async function carregarProdutos() {
+  const params = new URLSearchParams(window.location.search);
+  const marcaSelecionada = params.get("marca");
+  document.getElementById("marcaSelecionada").innerText = 
+    marcaSelecionada === "todos" ? "Todas as Marcas" : marcaSelecionada;
 
-      window.produtos = produtos;
+  const response = await fetch('produtos.json');
+  const produtos = await response.json();
+
+  const filtrados = marcaSelecionada === "todos" 
+    ? produtos 
+    : produtos.filter(p => p.marca === marcaSelecionada);
+
+  const container = document.getElementById('produtos-container');
+  container.innerHTML = '';
+
+  filtrados.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'produto';
+    div.innerHTML = `
+      <img src="${p.imagem}" alt="${p.descricao}">
+      <div><strong>${p.descricao}</strong></div>
+      <div>(${p.codigo})</div>
+      <div>${p.marca}</div>
+      <div>R$ ${p.valor.toFixed(2)}</div>
+      <div class="qtd-container">
+        <button onclick="alterarQtd(${i}, -1)">−</button>
+        <input type="text" id="qtd${i}" value="0" readonly>
+        <button onclick="alterarQtd(${i}, 1)">+</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  window.produtos = filtrados;
+}
+
+function alterarQtd(i, delta) {
+  const input = document.getElementById(`qtd${i}`);
+  let valor = parseInt(input.value) + delta;
+  if (valor < 0) valor = 0;
+  input.value = valor;
+  calcularTotal();
+}
+
+function calcularTotal() {
+  let total = 0;
+  window.produtos.forEach((p, i) => {
+    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
+    total += qtd * p.valor;
+  });
+  document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
+}
+
+function enviarWhatsApp() {
+  let mensagem = "🛒 *Pedido:*\n";
+  let total = 0;
+
+  window.produtos.forEach((p, i) => {
+    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
+    if (qtd > 0) {
+      mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
+      total += qtd * p.valor;
     }
+  });
 
-    function alterarQtd(i, delta) {
-      const input = document.getElementById(`qtd${i}`);
-      let valor = parseInt(input.value) + delta;
-      if (valor < 0) valor = 0;
-      input.value = valor;
-      calcularTotal();
-    }
+  mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
+  const telefone = "5519992394899";
+  const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, "_blank");
+}
 
-    function calcularTotal() {
-      let total = 0;
-      window.produtos.forEach((p, i) => {
-        const qtd = parseInt(document.getElementById(`qtd${i}`).value);
-        total += qtd * p.valor;
-      });
-      document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
-    }
+carregarProdutos();
+</script>
 
-    function enviarWhatsApp() {
-      let mensagem = "🛒 *Pedido:*\n";
-      let total = 0;
-
-      window.produtos.forEach((p, i) => {
-        const qtd = parseInt(document.getElementById(`qtd${i}`).value);
-        if (qtd > 0) {
-          mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
-          total += qtd * p.valor;
-        }
-      });
-
-      mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
-      const telefone = "5519992394899";
-      const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-      window.open(url, "_blank");
-    }
-
-    // Evita zoom ao clicar em botões ou inputs
-    document.addEventListener('touchstart', function(e) {
-      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    carregarProdutos();
-  </script>
 </body>
 </html>
