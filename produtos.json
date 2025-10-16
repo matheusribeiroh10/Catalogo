@@ -1,18 +1,18 @@
 [
   {
-    "codigo": "P001",
+    "codigo": "129",
     "descricao": "Danette Chocolate 360g",
     "valor": 10.00,
     "imagem": "https://i.imgur.com/u3nokqV.png"
   },
   {
-    "codigo": "P002",
+    "codigo": "64",
     "descricao": "Danette Branco 360g",
     "valor": 10.00,
     "imagem": "https://i.imgur.com/INZwUxs.png"
   },
   {
-    "codigo": "P003",
+    "codigo": "142",
     "descricao": "Danette Chocolate 540g",
     "valor": 10.00,
     "imagem": "https://i.imgur.com/KD2iEfV.png"
@@ -60,3 +60,4 @@
     "imagem": "https://via.placeholder.com/120"
   }
 ]
+
