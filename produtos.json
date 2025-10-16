@@ -3,42 +3,49 @@
     "codigo": "129",
     "descricao": "Danette Chocolate 360g",
     "valor": 10.00,
+    "marca": "Danone",
     "imagem": "https://i.imgur.com/u3nokqV.png"
   },
   {
     "codigo": "64",
     "descricao": "Danette Branco 360g",
     "valor": 10.00,
+    "marca": "Danone",
     "imagem": "https://i.imgur.com/INZwUxs.png"
   },
   {
     "codigo": "142",
     "descricao": "Danette Chocolate 540g",
     "valor": 10.00,
+    "marca": "Danone",
     "imagem": "https://i.imgur.com/KD2iEfV.png"
   },
   {
     "codigo": "P004",
     "descricao": "Produto 4",
     "valor": 10.00,
+    "marca": "Danone",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P005",
     "descricao": "Produto 5",
     "valor": 10.00,
+    "marca": " ",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P006",
     "descricao": "Produto 6",
     "valor": 10.00,
+    "marca": " ",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P007",
     "descricao": "Produto 7",
     "valor": 10.00,
+    "marca": " ",
     "imagem": "https://via.placeholder.com/120"
   },
   {
@@ -51,13 +58,16 @@
     "codigo": "P009",
     "descricao": "Produto 9",
     "valor": 10.00,
+    "marca": " ",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P010",
     "descricao": "Produto 10",
     "valor": 10.00,
+    "marca": " ",
     "imagem": "https://via.placeholder.com/120"
   }
 ]
+
 
