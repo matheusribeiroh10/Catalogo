@@ -31,43 +31,45 @@
     "codigo": "P005",
     "descricao": "Produto 5",
     "valor": 10.00,
-    "marca": " ",
+    "marca": "Nestlé",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P006",
     "descricao": "Produto 6",
     "valor": 10.00,
-    "marca": " ",
+    "marca": "Nestlé",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P007",
     "descricao": "Produto 7",
     "valor": 10.00,
-    "marca": " ",
+    "marca": "Kremoso",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P008",
     "descricao": "Produto 8",
     "valor": 10.00,
+    "marca": "Kremoso",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P009",
     "descricao": "Produto 9",
     "valor": 10.00,
-    "marca": " ",
+    "marca": "Kremoso",
     "imagem": "https://via.placeholder.com/120"
   },
   {
     "codigo": "P010",
     "descricao": "Produto 10",
     "valor": 10.00,
-    "marca": " ",
+    "marca": "Kremoso",
     "imagem": "https://via.placeholder.com/120"
   }
 ]
+
 
 
