@@ -5,103 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Catálogo Digital</title>
 <style>
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     font-family: Arial, sans-serif;
-    margin: 0;
+    margin: 10px;
     background: #f5f5f5;
-    padding-bottom: 90px; /* espaço pro botão fixo */
+    overscroll-behavior-y: contain; /* evita pular ao tocar */
   }
-
   h1 {
     text-align: center;
+    font-size: 1.4rem;
     color: #333;
-    font-size: 22px;
-    margin-top: 20px;
   }
-
+  .total-container {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin: 15px 0;
+  }
   .produtos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
-    padding: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
   }
-
   .produto {
     background: white;
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-
-  .produto:hover {
-    transform: scale(1.03);
-  }
-
   .produto img {
     width: 100%;
-    max-width: 180px;
-    height: 150px;
+    max-width: 140px;
+    height: 140px;
     object-fit: contain;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-
   .produto div {
-    margin: 5px 0;
+    margin: 4px 0;
   }
-
-  input[type=number] {
-    width: 70px;
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    text-align: center;
-  }
-
-  /* BOTÃO FIXO COM TOTAL */
-  .rodape-fixo {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #25D366;
-    color: white;
+  .qtd-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 15px 20px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-    border-radius: 12px 12px 0 0;
+    margin-top: 6px;
   }
-
-  .rodape-fixo span {
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .rodape-fixo button {
-    background: white;
-    color: #25D366;
+  .qtd-container button {
+    width: 28px;
+    height: 28px;
     border: none;
-    border-radius: 10px;
-    padding: 10px 18px;
-    font-size: 16px;
-    font-weight: bold;
+    background-color: #ddd;
+    color: #333;
+    font-size: 18px;
+    border-radius: 5px;
     cursor: pointer;
   }
-
-  .rodape-fixo button:hover {
-    background: #e6ffe6;
+  .qtd-container input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    pointer-events: none; /* impede teclado de abrir */
   }
-
-  /* MOBILE */
-  @media (max-width: 600px) {
-    h1 { font-size: 20px; }
-    .produto img { max-width: 140px; }
-    .rodape-fixo { flex-direction: column; gap: 8px; }
-    .rodape-fixo span { font-size: 16px; }
-    .rodape-fixo button { width: 100%; max-width: 280px; }
+  button.enviar {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 12px;
+    background-color: #25D366;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  button.enviar:hover {
+    background-color: #1ebe57;
   }
 </style>
 </head>
@@ -109,73 +95,5 @@
 
 <h1>Catálogo Digital</h1>
 
-<div class="produtos-grid" id="produtos-container"></div>
-
-<div class="rodape-fixo">
-  <span>Total: R$ <span id="total">0,00</span></span>
-  <button onclick="enviarWhatsApp()">📲 Enviar Pedido</button>
-</div>
-
-<script>
-const produtos = [
-  {
-    codigo: 'P001',
-    descricao: 'Danone Danette 0 360 preto',
-    valor: 10.00,
-    imagem: 'https://i.imgur.com/u3nokqV.png'
-  },
-  {
-    codigo: 'P002',
-    descricao: 'Danone Danette Branco 360g',
-    valor: 10.00,
-    imagem: 'https://i.imgur.com/INZwUxs.png'  
-  },
-  {
-    codigo: 'P003',
-    descricao: 'Danone Danette Preto 540g',
-    valor: 10.00,
-    imagem: 'https://i.imgur.com/KD2iEfV.png'
-  }
-];
-
-const container = document.getElementById('produtos-container');
-
-// Exibir produtos
-produtos.forEach((p, i) => {
-  const div = document.createElement('div');
-  div.className = 'produto';
-  div.innerHTML = `
-    <img src="${p.imagem}" alt="${p.descricao}">
-    <div><strong>${p.descricao}</strong> (${p.codigo})</div>
-    <div>R$ ${p.valor.toFixed(2)}</div>
-    <div>Quantidade: <input type="number" min="0" value="0" id="qtd${i}" onchange="calcularTotal()"></div>
-  `;
-  container.appendChild(div);
-});
-
-// Calcular total
-function calcularTotal() {
-  let total = 0;
-  produtos.forEach((p, i) => {
-    const qtd = parseFloat(document.getElementById(`qtd${i}`).value) || 0;
-    total += qtd * p.valor;
-  });
-  document.getElementById('total').textContent = total.toFixed(2);
-}
-
-// Enviar pedido via WhatsApp
-function enviarWhatsApp() {
-  let mensagem = '📦 *Pedido:*%0A';
-  produtos.forEach((p, i) => {
-    const qtd = parseFloat(document.getElementById(`qtd${i}`).value) || 0;
-    if(qtd > 0){
-      mensagem += `➡️ ${p.codigo} - ${p.descricao}: ${qtd} un.%0A`;
-    }
-  });
-  mensagem += `%0A💰 *Total:* R$ ${document.getElementById('total').textContent}`;
-  window.open(`https://wa.me/5519992394899?text=${mensagem}`, '_blank');
-}
-</script>
-
-</body>
-</html>
+<div class="total-container">
+  Total: R$ <span id="total">0,00
