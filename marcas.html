@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Catálogo - Escolher Marca</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    color: #2b7bba;
+  }
+  select, button {
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  button {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Escolha uma Marca</h1>
+<select id="marcaSelect">
+  <option value="todos">Todas as Marcas</option>
+</select>
+<button onclick="abrirCatalogo()">Abrir Catálogo</button>
+
+<script>
+  async function carregarMarcas() {
+    const response = await fetch('produtos.json');
+    const produtos = await response.json();
+    const marcas = [...new Set(produtos.map(p => p.marca))].sort();
+    const select = document.getElementById('marcaSelect');
+    marcas.forEach(marca => {
+      const opt = document.createElement('option');
+      opt.value = marca;
+      opt.textContent = marca;
+      select.appendChild(opt);
+    });
+  }
+
+  function abrirCatalogo() {
+    const marca = document.getElementById('marcaSelect').value;
+    window.location.href = `catalogo.html?marca=${encodeURIComponent(marca)}`;
+  }
+
+  carregarMarcas();
+</script>
+
+</body>
+</html>
