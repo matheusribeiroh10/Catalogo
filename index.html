@@ -18,6 +18,7 @@
       -webkit-touch-callout: none;
       touch-action: manipulation;
     }
+
     header {
       background: #2b7bba;
       color: white;
@@ -28,17 +29,24 @@
       top: 0;
       z-index: 10;
     }
+
     #total {
       margin-top: 8px;
       font-size: 16px;
       font-weight: bold;
     }
+
+    /* Contêiner principal do catálogo */
     #produtos-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       padding: 12px;
+      max-width: 700px;       /* largura máxima no computador */
+      margin: auto;            /* centraliza */
     }
+
+    /* Produto individual */
     .produto {
       background: white;
       border-radius: 12px;
@@ -53,12 +61,14 @@
       width: 100%;
       border-radius: 10px;
     }
+
     .qtd-container {
       display: flex;
       align-items: center;
       justify-content: center;
       margin-top: 5px;
     }
+
     .qtd-container button {
       width: 28px;
       height: 28px;
@@ -70,6 +80,7 @@
       font-weight: bold;
       touch-action: manipulation;
     }
+
     .qtd-container input {
       width: 40px;
       text-align: center;
@@ -80,6 +91,7 @@
       pointer-events: none; /* impede foco */
       touch-action: none;
     }
+
     button#enviar {
       background: #25d366;
       color: white;
@@ -91,6 +103,19 @@
       display: block;
       font-weight: bold;
       touch-action: manipulation;
+    }
+
+    /* 🧱 Responsividade */
+    @media (max-width: 500px) {
+      #produtos-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 900px) {
+      #produtos-container {
+        grid-template-columns: repeat(3, 1fr); /* se quiser 3 colunas no PC */
+      }
     }
   </style>
 </head>
