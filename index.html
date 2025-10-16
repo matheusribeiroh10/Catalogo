@@ -96,4 +96,69 @@
 <h1>Catálogo Digital</h1>
 
 <div class="total-container">
-  Total: R$ <span id="total">0,00
+  Total: R$ <span id="total">0,00</span>
+</div>
+
+<div class="produtos-grid" id="produtos-container"></div>
+
+<button class="enviar" onclick="enviarWhatsApp()">Enviar Pedido via WhatsApp</button>
+
+<script>
+const produtos = [
+  { codigo: 'P001', descricao: 'Danone Danette 360g Preto', valor: 10.00, imagem: 'https://i.imgur.com/u3nokqV.png' },
+  { codigo: 'P002', descricao: 'Danone Danette 360g Branco', valor: 10.00, imagem: 'https://imgur.com/INZwUxs.png' },
+  { codigo: 'P003', descricao: 'Danone Danette 540g Preto', valor: 10.00, imagem: 'https://imgur.com/KD2iEfV.png' }
+];
+
+const container = document.getElementById('produtos-container');
+
+// Criar produtos
+produtos.forEach((p, i) => {
+  const div = document.createElement('div');
+  div.className = 'produto';
+  div.innerHTML = `
+    <img src="${p.imagem}" alt="${p.descricao}">
+    <div><strong>${p.descricao}</strong></div>
+    <div>(${p.codigo})</div>
+    <div>R$ ${p.valor.toFixed(2)}</div>
+    <div class="qtd-container">
+      <button onclick="alterarQtd(${i}, -1)">−</button>
+      <input type="text" id="qtd${i}" value="0" readonly>
+      <button onclick="alterarQtd(${i}, 1)">+</button>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+function alterarQtd(i, delta) {
+  const input = document.getElementById(`qtd${i}`);
+  let qtd = parseInt(input.value) + delta;
+  if (qtd < 0) qtd = 0;
+  input.value = qtd;
+  calcularTotal();
+}
+
+function calcularTotal() {
+  let total = 0;
+  produtos.forEach((p, i) => {
+    const qtd = parseFloat(document.getElementById(`qtd${i}`).value) || 0;
+    total += qtd * p.valor;
+  });
+  document.getElementById('total').textContent = total.toFixed(2);
+}
+
+function enviarWhatsApp() {
+  let mensagem = '🛒 *Pedido:*\n';
+  produtos.forEach((p, i) => {
+    const qtd = parseFloat(document.getElementById(`qtd${i}`).value) || 0;
+    if (qtd > 0) {
+      mensagem += `• ${p.descricao} (${p.codigo}) - ${qtd} un.\n`;
+    }
+  });
+  mensagem += `\n💰 Total: R$ ${document.getElementById('total').textContent}`;
+  window.open(`https://wa.me/5519992394899?text=${encodeURIComponent(mensagem)}`, '_blank');
+}
+</script>
+
+</body>
+</html>
