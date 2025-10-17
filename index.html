@@ -2,40 +2,39 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; background:#f7f7f7; }
-header { background:#2b7bba; color:white; padding:12px; font-size:20px; font-weight:bold; position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; }
-#total { font-size:16px; }
-#produtos-container { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:12px; max-width:700px; margin:auto; }
-.produto { background:white; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:10px; }
-.produto img { width:100%; border-radius:10px; }
-.qtd-container { display:flex; align-items:center; justify-content:center; margin-top:5px; }
-.qtd-container button { width:28px; height:28px; border:none; border-radius:6px; background:#2b7bba; color:white; font-size:18px; font-weight:bold; }
-.qtd-container input { width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px; pointer-events:none; }
-#btnEnviar { background:#25d366; color:white; border:none; padding:8px 14px; font-size:16px; border-radius:10px; cursor:pointer; }
-#btnVoltar { background:#fff; color:#2b7bba; border:2px solid #2b7bba; padding:8px 14px; font-size:16px; border-radius:10px; cursor:pointer; }
-#marcas-container { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:12px; }
-.btnMarca { background:#ddd; border:none; border-radius:8px; padding:10px; cursor:pointer; white-space:pre-line; }
-.btnMarca.todas { background:#2b7bba; color:white; font-weight:bold; }
+body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
+header {background:#2b7bba; color:white; padding:12px; font-size:20px; font-weight:bold; position:sticky; top:0; z-index:10; display:flex; justify-content:space-between; align-items:center;}
+#total {font-size:16px; font-weight:bold;}
+#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px 0;}
+.marca-btn {padding:10px 15px; font-size:14px; border-radius:8px; border:none; cursor:pointer; white-space:normal; text-align:center; word-break:break-word;}
+.marca-btn.todas {background:#25d366; color:white; font-weight:bold;}
+.marca-btn:not(.todas) {background:#2b7bba; color:white;}
+#produtos-container {display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:12px; max-width:700px; margin:auto;}
+.produto {background:white; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:10px;}
+.produto img {width:100%; border-radius:10px;}
+.qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
+.qtd-container button {width:28px; height:28px; border:none; border-radius:6px; background:#2b7bba; color:white; font-size:18px; font-weight:bold;}
+.qtd-container input {width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px; pointer-events:none;}
+button#enviar {background:#25d366; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
+button#voltar {background:#e74c3c; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
 </style>
 </head>
 <body>
 
 <header>
-  <button id="btnVoltar" onclick="voltarMarcas()" style="display:none;">⬅ Marcas</button>
-  <div>
-    Catálogo Digital <span id="total">Total: R$ 0,00</span>
-  </div>
-  <button id="btnEnviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
+<button id="voltar" onclick="voltarMarcas()">? Marcas</button>
+<div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
+<button id="enviar" onclick="enviarWhatsApp()">?? Enviar Pedido</button>
 </header>
 
 <div id="marcas-container"></div>
-<div id="produtos-container" style="display:none;"></div>
+<div id="produtos-container"></div>
 
 <script>
-// ====================== LISTA DE PRODUTOS ======================
+// Lista completa de produtos
 const produtos = [
   {"codigo":"8921","descricao":"Pão Visc. Trad","marca":"Bauducco","valor":39.90,"imagem":"https://via.placeholder.com/120"},
   {"codigo":"8922","descricao":"Pão BAUD. Integral","marca":"Bauducco","valor":45.00,"imagem":"https://via.placeholder.com/120"},
@@ -187,120 +186,101 @@ const produtos = [
   {"codigo":"8970","descricao":"Sacola Verde 30X40 - 4 Kilo","marca":"Sacola","valor":48.00,"imagem":"https://via.placeholder.com/120"},
   {"codigo":"8971","descricao":"Sacola Verde 40X50 - 4 Kilo","marca":"Sacola","valor":48.00,"imagem":"https://via.placeholder.com/120"},
   {"codigo":"8972","descricao":"Sacola Verde 45X60 - 4 Kilo","marca":"Sacola","valor":48.00,"imagem":"https://via.placeholder.com/120"}
-];
+]
+// Lista de marcas
+const marcas = ["Todas","Danone","Iogurte Kremoso","Pudim Rebeka","Nestlé","Bauducco","Elma Chips","Fritop","Oz Pipocas","Fofinho Salgadinhos","Rei da Massa","Sacolas"];
 
-// ====================== MARCAS ======================
-const marcas = ["Todas", ...[...new Set(produtos.map(p=>p.marca))]];
-
-// ====================== VARIÁVEIS ======================
-let produtosFiltrados = [];
-let produtosRenderizados = 0;
-const batch = 20; // renderiza 20 produtos por vez
-
-// ====================== FUNÇÕES ======================
-function criarBotoesMarcas(){
+function criarBotoesMarcas() {
   const container = document.getElementById('marcas-container');
-  container.innerHTML='';
-  marcas.forEach(marca=>{
+  container.innerHTML = '';
+  let larguraMax = 0;
+  const tempBtns = marcas.map(marca => {
     const btn = document.createElement('button');
-    btn.className='btnMarca'+(marca==='Todas'?' todas':'');
-    btn.innerText=marca;
-    btn.onclick=()=>mostrarProdutos(marca);
+    btn.className = 'marca-btn' + (marca === "Todas" ? ' todas' : '');
+    btn.innerText = marca;
+    btn.style.visibility = 'hidden';
     container.appendChild(btn);
+    larguraMax = Math.max(larguraMax, btn.offsetWidth);
+    return btn;
+  });
+  tempBtns.forEach((btn, i) => {
+    btn.style.width = larguraMax + 'px';
+    btn.style.visibility = 'visible';
+    btn.onclick = () => filtrarMarca(marcas[i]);
   });
 }
 
-function mostrarProdutos(marca){
-  document.getElementById('marcas-container').style.display='none';
-  document.getElementById('produtos-container').style.display='grid';
-  document.getElementById('btnVoltar').style.display='inline-block';
-  produtosFiltrados = marca==='Todas'? produtos : produtos.filter(p=>p.marca===marca);
-  produtosRenderizados=0;
-  document.getElementById('produtos-container').innerHTML='';
-  renderizarProximoBatch();
+function filtrarMarca(marca) {
+  const filtrados = marca === "Todas" ? produtos : produtos.filter(p => p.marca === marca);
+  carregarProdutos(filtrados);
 }
 
-function renderizarProximoBatch(){
+function carregarProdutos(listaProdutos) {
   const container = document.getElementById('produtos-container');
-  const fim = Math.min(produtosRenderizados+batch, produtosFiltrados.length);
-  for(let i=produtosRenderizados; i<fim; i++){
-    const p = produtosFiltrados[i];
+  container.innerHTML = '';
+  window.produtosFiltrados = listaProdutos;
+  listaProdutos.forEach((p, i) => {
     const div = document.createElement('div');
-    div.className='produto';
-    div.innerHTML=`
+    div.className = 'produto';
+    div.innerHTML = `
       <img src="${p.imagem}" alt="${p.descricao}">
       <div><strong>${p.descricao}</strong></div>
       <div>(${p.codigo})</div>
       <div>${p.marca}</div>
       <div>R$ ${p.valor.toFixed(2)}</div>
       <div class="qtd-container">
-        <button onclick="alterarQtd('${p.codigo}',-1)">−</button>
-        <input type="text" id="qtd${p.codigo}" value="0" readonly>
-        <button onclick="alterarQtd('${p.codigo}',1)">+</button>
+        <button onclick="alterarQtd(${i}, -1)">-</button>
+        <input type="text" id="qtd${i}" value="0" readonly>
+        <button onclick="alterarQtd(${i}, 1)">+</button>
       </div>
     `;
     container.appendChild(div);
-  }
-  produtosRenderizados=fim;
-}
-
-function voltarMarcas(){
-  document.getElementById('marcas-container').style.display='flex';
-  document.getElementById('produtos-container').style.display='none';
-  document.getElementById('btnVoltar').style.display='none';
-  document.getElementById('total').innerText='Total: R$ 0,00';
-  // resetar quantidades
-  produtosFiltrados.forEach(p=>{
-    document.getElementById(`qtd${p.codigo}`)?.value = 0;
   });
-}
-
-function alterarQtd(codigo, delta){
-  const input = document.getElementById(`qtd${codigo}`);
-  let valor = parseInt(input.value) + delta;
-  if(valor<0) valor=0;
-  input.value=valor;
   calcularTotal();
 }
 
-function calcularTotal(){
-  let total=0;
-  produtosFiltrados.forEach(p=>{
-    const qtd=parseInt(document.getElementById(`qtd${p.codigo}`)?.value||0);
-    total += qtd*p.valor;
-  });
-  document.getElementById('total').innerText=`Total: R$ ${total.toFixed(2)}`;
+function alterarQtd(i, delta) {
+  const input = document.getElementById(`qtd${i}`);
+  let valor = parseInt(input.value) + delta;
+  if (valor < 0) valor = 0;
+  input.value = valor;
+  calcularTotal();
 }
 
-function enviarWhatsApp(){
-  let mensagem="🛒 *Pedido:*\n";
-  let total=0;
-  produtosFiltrados.forEach(p=>{
-    const qtd=parseInt(document.getElementById(`qtd${p.codigo}`)?.value||0);
-    if(qtd>0){
+function calcularTotal() {
+  let total = 0;
+  if (!window.produtosFiltrados) return;
+  window.produtosFiltrados.forEach((p, i) => {
+    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
+    total += qtd * p.valor;
+  });
+  document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
+}
+
+function enviarWhatsApp() {
+  let mensagem = "?? *Pedido:*\n";
+  let total = 0;
+  window.produtosFiltrados.forEach((p, i) => {
+    const qtd = parseInt(document.getElementById(`qtd${i}`).value);
+    if (qtd > 0) {
       mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
-      total += qtd*p.valor;
+      total += qtd * p.valor;
     }
   });
-  mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
-  const telefone="5519992394899";
-  const url=`https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-  window.open(url,"_blank");
+  mensagem += `\n?? Total: R$ ${total.toFixed(2)}`;
+  const telefone = "5519992394899";
+  const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, "_blank");
 }
 
-// ====================== LAZY LOAD ======================
-window.addEventListener('scroll',()=>{
-  const container=document.getElementById('produtos-container');
-  if(container.style.display==='grid'){
-    if(window.innerHeight+window.scrollY >= document.body.offsetHeight-200){
-      renderizarProximoBatch();
-    }
-  }
-});
+function voltarMarcas() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  filtrarMarca("Todas");
+}
 
-// ====================== INICIALIZAÇÃO ======================
 criarBotoesMarcas();
-</script>
+filtrarMarca("Todas");
 
+</script>
 </body>
 </html>
