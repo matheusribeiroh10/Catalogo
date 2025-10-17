@@ -5,226 +5,140 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f7f7f7;
-  }
-
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #2b7bba;
-    color: white;
-    padding: 12px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  #titulo-catalogo {
-    display: flex;
-    flex-direction: column;
-  }
-
-  #total {
-    font-size: 14px;
-    font-weight: bold;
-  }
-
-  button {
-    border: none;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  #voltar {
-    background: #ff5e5e;
-    color: white;
-  }
-
-  #enviar {
-    background: #25d366;
-    color: white;
-  }
-
-  #produtos-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 12px;
-    max-width: 900px;
-    margin: auto;
-  }
-
-  .produto {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .produto img {
-    width: 100%;
-    border-radius: 10px;
-    max-height: 120px;
-    object-fit: contain;
-  }
-
-  .qtd-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5px;
-  }
-
-  .qtd-container button {
-    width: 28px;
-    height: 28px;
-    border: none;
-    border-radius: 6px;
-    background: #2b7bba;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .qtd-container input {
-    width: 40px;
-    text-align: center;
-    margin: 0 5px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    pointer-events: none;
-  }
-
-  .produto div {
-    margin: 4px 0;
-    text-align: center;
-    word-break: break-word;
-  }
-
-  @media (max-width: 600px) {
-    #produtos-container {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
+body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
+header {background:#2b7bba; color:white; padding:12px; font-size:18px; font-weight:bold; position:sticky; top:0; z-index:10; display:flex; justify-content:space-between; align-items:center;}
+#total {font-size:15px; font-weight:bold;}
+#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px 0;}
+.marca-btn {padding:10px 15px; font-size:14px; border-radius:8px; border:none; cursor:pointer; white-space:normal; text-align:center; word-break:break-word;}
+.marca-btn.todas {background:#25d366; color:white; font-weight:bold;}
+.marca-btn:not(.todas) {background:#2b7bba; color:white;}
+#produtos-container {display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:12px; max-width:700px; margin:auto;}
+.produto {background:white; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:10px;}
+.produto img {width:100%; border-radius:10px;}
+.qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
+.qtd-container button {width:28px; height:28px; border:none; border-radius:6px; background:#2b7bba; color:white; font-size:18px; font-weight:bold;}
+.qtd-container input {width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px; pointer-events:none;}
+button#enviar {background:#25d366; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
+button#voltar {background:#e74c3c; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
+.hidden {display:none;}
 </style>
 </head>
 <body>
 
 <header>
-  <button id="voltar" onclick="voltarMarcas()">⬅ Marcas</button>
-  <div id="titulo-catalogo">
-    <div>Catálogo Digital</div>
-    <div id="marcaSelecionada">Todas as Marcas</div>
-    <div id="total">Total: R$ 0,00</div>
-  </div>
-  <button id="enviar" onclick="enviarWhatsApp()">📤 Enviar Pedido</button>
+<button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
+<div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
+<button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
 </header>
 
-<div id="produtos-container"></div>
+<!-- TELA 1: MARCAS -->
+<div id="tela-marcas">
+  <h3>Escolha uma Marca</h3>
+  <div id="marcas-container"></div>
+</div>
+
+<!-- TELA 2: PRODUTOS -->
+<div id="tela-produtos" class="hidden">
+  <h3 id="titulo-marca"></h3>
+  <div id="produtos-container"></div>
+</div>
 
 <script>
-async function carregarProdutos() {
-  const params = new URLSearchParams(window.location.search);
-  const marcaSelecionada = params.get("marca") || "todos";
-  document.getElementById("marcaSelecionada").innerText = 
-    marcaSelecionada === "todos" ? "Todas as Marcas" : marcaSelecionada;
+// === DADOS SIMPLIFICADOS DE EXEMPLO ===
+const produtos = [
+  {codigo:"8921",descricao:"Pão Visc. Trad",marca:"Bauducco",valor:39.90,imagem:"https://via.placeholder.com/120"},
+  {codigo:"8922",descricao:"Pão Integral",marca:"Bauducco",valor:45.00,imagem:"https://via.placeholder.com/120"},
+  {codigo:"143",descricao:"Danette Branco 360G",marca:"Danone",valor:74.40,imagem:"https://via.placeholder.com/120"},
+  {codigo:"214",descricao:"Yopro Morango",marca:"Danone",valor:160.80,imagem:"https://via.placeholder.com/120"},
+  {codigo:"625",descricao:"Salgadinho Cebola 40g",marca:"Divinitos",valor:8.90,imagem:"https://via.placeholder.com/120"},
+  {codigo:"5981",descricao:"Ruffles Cebola 32g",marca:"Elma Chips",valor:167.44,imagem:"https://via.placeholder.com/120"}
+];
 
-  const response = await fetch('produtos.json');
-  const produtos = await response.json();
+let carrinho = {};
 
-  const filtrados = marcaSelecionada === "todos" 
-    ? produtos 
-    : produtos.filter(p => p.marca === marcaSelecionada);
+// === LISTA DE MARCAS ===
+const marcas = [...new Set(produtos.map(p => p.marca))].sort();
 
-  const container = document.getElementById('produtos-container');
-  container.innerHTML = '';
+// === CRIA OS BOTÕES DE MARCAS ===
+function criarBotoesMarcas() {
+  const container = document.getElementById("marcas-container");
+  container.innerHTML = "";
+  marcas.forEach(marca => {
+    const btn = document.createElement("button");
+    btn.className = "marca-btn";
+    btn.textContent = marca;
+    btn.onclick = () => mostrarProdutos(marca);
+    container.appendChild(btn);
+  });
+}
 
-  // Ajuste de largura igual para todos os botões de quantidade
-  let larguraMaior = 0;
-  filtrados.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'produto';
+// === MOSTRAR PRODUTOS POR MARCA ===
+function mostrarProdutos(marca) {
+  document.getElementById("tela-marcas").classList.add("hidden");
+  document.getElementById("tela-produtos").classList.remove("hidden");
+  document.getElementById("titulo-marca").textContent = "Marca: " + marca;
+
+  const container = document.getElementById("produtos-container");
+  container.innerHTML = "";
+
+  produtos.filter(p => p.marca === marca).forEach(prod => {
+    const div = document.createElement("div");
+    div.className = "produto";
     div.innerHTML = `
-      <img src="${p.imagem}" alt="${p.descricao}">
-      <div><strong>${p.descricao}</strong></div>
-      <div>(${p.codigo})</div>
-      <div>${p.marca}</div>
-      <div>R$ ${p.valor.toFixed(2)}</div>
+      <img src="${prod.imagem}" alt="${prod.descricao}">
+      <h4>${prod.descricao}</h4>
+      <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
       <div class="qtd-container">
-        <button>-</button>
-        <input type="text" value="0" readonly>
-        <button>+</button>
+        <button onclick="alterarQtd('${prod.codigo}', -1)">-</button>
+        <input id="qtd-${prod.codigo}" value="0">
+        <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
       </div>
     `;
     container.appendChild(div);
-    const btns = div.querySelectorAll(".qtd-container button");
-    btns.forEach(b => {
-      if (b.offsetWidth > larguraMaior) larguraMaior = b.offsetWidth;
-    });
   });
-
-  // Ajusta todos os botões para a mesma largura
-  container.querySelectorAll(".qtd-container button").forEach(b => b.style.width = `${larguraMaior}px`);
-
-  // adiciona eventos de clique
-  container.querySelectorAll(".qtd-container").forEach((qtdDiv, i) => {
-    const input = qtdDiv.querySelector("input");
-    const [btnMenos, btnMais] = qtdDiv.querySelectorAll("button");
-    btnMais.onclick = () => alterarQtd(input, filtrados[i].valor);
-    btnMenos.onclick = () => alterarQtd(input, filtrados[i].valor, -1);
-  });
-
-  window.produtos = filtrados;
 }
 
-function alterarQtd(input, valorProduto, delta = 1) {
+// === VOLTAR À TELA DE MARCAS ===
+function mostrarMarcas() {
+  document.getElementById("tela-produtos").classList.add("hidden");
+  document.getElementById("tela-marcas").classList.remove("hidden");
+}
+
+// === ALTERAR QUANTIDADE ===
+function alterarQtd(codigo, delta) {
+  const input = document.getElementById(`qtd-${codigo}`);
   let qtd = parseInt(input.value) + delta;
   if (qtd < 0) qtd = 0;
   input.value = qtd;
-  calcularTotal();
+  const prod = produtos.find(p => p.codigo === codigo);
+  if (qtd > 0) carrinho[codigo] = { ...prod, qtd };
+  else delete carrinho[codigo];
+  atualizarTotal();
 }
 
-function calcularTotal() {
+// === CALCULAR TOTAL ===
+function atualizarTotal() {
   let total = 0;
-  document.querySelectorAll("#produtos-container .produto").forEach((div, i) => {
-    const qtd = parseInt(div.querySelector("input").value);
-    total += qtd * window.produtos[i].valor;
-  });
-  document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
+  for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
+  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
 }
 
+// === ENVIAR WHATSAPP ===
 function enviarWhatsApp() {
-  let mensagem = "🛒 *Pedido:*\n";
-  let total = 0;
-  document.querySelectorAll("#produtos-container .produto").forEach((div, i) => {
-    const qtd = parseInt(div.querySelector("input").value);
-    if (qtd > 0) {
-      const p = window.produtos[i];
-      mensagem += `• (${p.codigo}) ${p.descricao} - ${qtd} un.\n`;
-      total += qtd * p.valor;
-    }
-  });
-  mensagem += `\n💰 Total: R$ ${total.toFixed(2)}`;
-  const telefone = "5519992394899";
-  const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+  if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
+  let msg = "🛒 *Pedido de Produtos:*%0A";
+  for (let c in carrinho) {
+    const p = carrinho[c];
+    msg += `• ${p.descricao} (${p.qtd}x) - R$ ${(p.valor*p.qtd).toFixed(2)}%0A`;
+  }
+  const total = Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
+  msg += `%0A💰 *Total:* R$ ${total.toFixed(2)}`;
+  const url = "https://wa.me/5519992394899?text=" + msg;
   window.open(url, "_blank");
 }
 
-function voltarMarcas() {
-  window.location.href = "marcas.html";
-}
-
-carregarProdutos();
+// === INICIAR ===
+criarBotoesMarcas();
 </script>
 
 </body>
