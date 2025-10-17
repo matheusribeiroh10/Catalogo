@@ -2,39 +2,95 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
 body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
-header {background:#2b7bba; color:white; padding:12px; font-size:18px; font-weight:bold; position:sticky; top:0; z-index:10; display:flex; justify-content:space-between; align-items:center;}
+header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
+        position:sticky; top:0; z-index:10; display:flex; justify-content:space-between;
+        align-items:center;}
 #total {font-size:15px; font-weight:bold;}
-#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px 0;}
-.marca-btn {padding:10px 15px; font-size:14px; border-radius:8px; border:none; cursor:pointer; white-space:normal; text-align:center; word-break:break-word;}
-.marca-btn.todas {background:#25d366; color:white; font-weight:bold;}
-.marca-btn:not(.todas) {background:#2b7bba; color:white;}
-#produtos-container {display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:12px; max-width:700px; margin:auto;}
-.produto {background:white; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:10px;}
+#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px;}
+.marca-btn {
+    flex: 1 1 120px;
+    min-width: 130px;
+    max-width: 160px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-size:14px;
+    background:#2b7bba;
+    color:white;
+    cursor:pointer;
+    word-wrap:break-word;
+    white-space:normal;
+}
+.marca-btn.tudo {
+    background:#25d366;
+    font-weight:bold;
+}
+#produtos-container {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    padding:12px;
+    max-width:700px;
+    margin:auto;
+}
+.produto {
+    background:white;
+    border-radius:12px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    padding:10px;
+}
 .produto img {width:100%; border-radius:10px;}
 .qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
-.qtd-container button {width:28px; height:28px; border:none; border-radius:6px; background:#2b7bba; color:white; font-size:18px; font-weight:bold;}
-.qtd-container input {width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px; pointer-events:none;}
-button#enviar {background:#25d366; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
-button#voltar {background:#e74c3c; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;}
+.qtd-container button {
+    width:28px; height:28px; border:none; border-radius:6px;
+    background:#2b7bba; color:white; font-size:18px; font-weight:bold;
+}
+.qtd-container input {
+    width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px;
+    pointer-events:none;
+}
+button#enviar {
+    background:#25d366; color:white; border:none;
+    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
+}
+button#voltar {
+    background:#e74c3c; color:white; border:none;
+    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
+}
 .hidden {display:none;}
 </style>
 </head>
 <body>
 
 <header>
-<button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
-<div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
-<button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
+  <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
+  <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
+  <button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
 </header>
 
 <!-- TELA 1: MARCAS -->
 <div id="tela-marcas">
   <h3>Escolha uma Marca</h3>
-  <div id="marcas-container"></div>
+  <div id="marcas-container">
+    <button class="marca-btn tudo" onclick="mostrarProdutos('Tudo')">Tudo</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Bauducco')">Bauducco</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Danone')">Danone</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Divinitos')">Divinitos</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Elma Chips')">Elma Chips</button>
+    <button class="marca-btn" onclick="mostrarProdutos('FRITOP')">FRITOP</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Frutap')">Frutap</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Kremoso')">Kremoso</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Nestlé')">Nestlé</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Oz Pipocas')">Oz Pipocas</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Rebeka Pudim')">Rebeka Pudim</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Rei da Massa')">Rei da Massa</button>
+    <button class="marca-btn" onclick="mostrarProdutos('Sacolas')">Sacolas</button>
+  </div>
 </div>
 
 <!-- TELA 2: PRODUTOS -->
@@ -44,58 +100,45 @@ button#voltar {background:#e74c3c; color:white; border:none; padding:8px 12px; f
 </div>
 
 <script>
-// === DADOS SIMPLIFICADOS DE EXEMPLO ===
+// === PRODUTOS EXEMPLO (pode trocar pelos seus ou usar JSON depois) ===
 const produtos = [
-  {codigo:"8921",descricao:"Pão Visc. Trad",marca:"Bauducco",valor:39.90,imagem:"https://via.placeholder.com/120"},
-  {codigo:"8922",descricao:"Pão Integral",marca:"Bauducco",valor:45.00,imagem:"https://via.placeholder.com/120"},
   {codigo:"143",descricao:"Danette Branco 360G",marca:"Danone",valor:74.40,imagem:"https://via.placeholder.com/120"},
   {codigo:"214",descricao:"Yopro Morango",marca:"Danone",valor:160.80,imagem:"https://via.placeholder.com/120"},
-  {codigo:"625",descricao:"Salgadinho Cebola 40g",marca:"Divinitos",valor:8.90,imagem:"https://via.placeholder.com/120"},
-  {codigo:"5981",descricao:"Ruffles Cebola 32g",marca:"Elma Chips",valor:167.44,imagem:"https://via.placeholder.com/120"}
+  {codigo:"5981",descricao:"Ruffles Cebola 32g",marca:"Elma Chips",valor:167.44,imagem:"https://via.placeholder.com/120"},
+  {codigo:"8921",descricao:"Pão Visc. Trad",marca:"Bauducco",valor:39.90,imagem:"https://via.placeholder.com/120"},
+  {codigo:"625",descricao:"Salgadinho Cebola 40g",marca:"Divinitos",valor:8.90,imagem:"https://via.placeholder.com/120"}
 ];
 
 let carrinho = {};
 
-// === LISTA DE MARCAS ===
-const marcas = [...new Set(produtos.map(p => p.marca))].sort();
-
-// === CRIA OS BOTÕES DE MARCAS ===
-function criarBotoesMarcas() {
-  const container = document.getElementById("marcas-container");
-  container.innerHTML = "";
-  marcas.forEach(marca => {
-    const btn = document.createElement("button");
-    btn.className = "marca-btn";
-    btn.textContent = marca;
-    btn.onclick = () => mostrarProdutos(marca);
-    container.appendChild(btn);
-  });
-}
-
-// === MOSTRAR PRODUTOS POR MARCA ===
+// === MOSTRAR PRODUTOS ===
 function mostrarProdutos(marca) {
   document.getElementById("tela-marcas").classList.add("hidden");
   document.getElementById("tela-produtos").classList.remove("hidden");
-  document.getElementById("titulo-marca").textContent = "Marca: " + marca;
+  document.getElementById("titulo-marca").textContent =
+    marca === "Tudo" ? "Todos os Produtos" : "Marca: " + marca;
 
   const container = document.getElementById("produtos-container");
   container.innerHTML = "";
 
-  produtos.filter(p => p.marca === marca).forEach(prod => {
-    const div = document.createElement("div");
-    div.className = "produto";
-    div.innerHTML = `
-      <img src="${prod.imagem}" alt="${prod.descricao}">
-      <h4>${prod.descricao}</h4>
-      <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
-      <div class="qtd-container">
-        <button onclick="alterarQtd('${prod.codigo}', -1)">-</button>
-        <input id="qtd-${prod.codigo}" value="0">
-        <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
-      </div>
-    `;
-    container.appendChild(div);
-  });
+  produtos
+    .filter(p => marca === "Tudo" || p.marca === marca)
+    .forEach(prod => {
+      const div = document.createElement("div");
+      div.className = "produto";
+      div.innerHTML = `
+        <img src="${prod.imagem}" alt="${prod.descricao}">
+        <h4>${prod.descricao}</h4>
+        <small>(${prod.codigo})</small>
+        <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
+        <div class="qtd-container">
+          <button onclick="alterarQtd('${prod.codigo}', -1)">-</button>
+          <input id="qtd-${prod.codigo}" value="0">
+          <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
 }
 
 // === VOLTAR À TELA DE MARCAS ===
@@ -111,7 +154,7 @@ function alterarQtd(codigo, delta) {
   if (qtd < 0) qtd = 0;
   input.value = qtd;
   const prod = produtos.find(p => p.codigo === codigo);
-  if (qtd > 0) carrinho[codigo] = { ...prod, qtd };
+  if (qtd > 0) carrinho[codigo] = {...prod, qtd};
   else delete carrinho[codigo];
   atualizarTotal();
 }
@@ -126,19 +169,16 @@ function atualizarTotal() {
 // === ENVIAR WHATSAPP ===
 function enviarWhatsApp() {
   if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
-  let msg = "🛒 *Pedido de Produtos:*%0A";
+  let msg = "🛒 *Pedido:*%0A";
   for (let c in carrinho) {
     const p = carrinho[c];
-    msg += `• ${p.descricao} (${p.qtd}x) - R$ ${(p.valor*p.qtd).toFixed(2)}%0A`;
+    msg += `• ${p.descricao} (${p.codigo}) - ${p.qtd} un.%0A`;
   }
   const total = Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
   msg += `%0A💰 *Total:* R$ ${total.toFixed(2)}`;
   const url = "https://wa.me/5519992394899?text=" + msg;
   window.open(url, "_blank");
 }
-
-// === INICIAR ===
-criarBotoesMarcas();
 </script>
 
 </body>
