@@ -44,7 +44,15 @@ header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weig
     box-shadow:0 2px 5px rgba(0,0,0,0.1);
     padding:10px;
 }
-.produto img {width:100%; border-radius:10px;}  /* 🔹 Mantido para padrão */
+
+/* 🔹 ALTERADO: todas as imagens terão o mesmo tamanho fixo e corte centralizado */
+.produto img {
+    width: 100%;
+    height: 160px;        /* altura fixa */
+    object-fit: cover;    /* corta excesso e centraliza */
+    border-radius:10px;
+}
+
 .qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
 .qtd-container button {
     width:28px; height:28px; border:none; border-radius:6px;
@@ -102,7 +110,7 @@ button#voltar {
 <script>
 // === PRODUTOS EXEMPLO (pode trocar pelos seus ou usar JSON depois) ===
 const produtos = [
- {"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
+{"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
 {"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"},
 {"Código":"142","descricao":"Danette Bd 540G Choc.","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/1Xguy2c.png"},
 {"Código":"143","descricao":"Danette Bd 540G Branco","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/RDUQAqa.png"},
@@ -272,8 +280,7 @@ function mostrarProdutos(marca) {
       const div = document.createElement("div");
       div.className = "produto";
       div.innerHTML = `
-        <!-- 🔹 ALTERADO: adicionado onload para ajustar imagem -->
-        <img src="${prod.imagem}" alt="${prod.descricao}" onload="ajustarTamanhoImagem(this)">
+        <img src="${prod.imagem}" alt="${prod.descricao}">
         <h4>${prod.descricao}</h4>
         <small>(${prod.codigo})</small>
         <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
@@ -285,25 +292,6 @@ function mostrarProdutos(marca) {
       `;
       container.appendChild(div);
     });
-}
-
-// === 🔹 NOVA FUNÇÃO: AJUSTAR TAMANHO DAS IMAGENS ===
-function ajustarTamanhoImagem(img) {
-  const largura = img.naturalWidth;
-  const altura = img.naturalHeight;
-  if (!largura || !altura) return;
-
-  // Se altura for > 20% da largura, reduz
-  if (altura > largura * 0.2) {
-    const menor = Math.min(largura, altura);
-    const novaAltura = menor * 1.1;
-    img.style.height = `${novaAltura}px`;
-    img.style.objectFit = "contain";
-  } else {
-    img.style.width = "100%";
-    img.style.height = "auto";
-    img.style.objectFit = "cover";
-  }
 }
 
 // === VOLTAR À TELA DE MARCAS ===
