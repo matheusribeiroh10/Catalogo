@@ -44,11 +44,11 @@ header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weig
     box-shadow:0 2px 5px rgba(0,0,0,0.1);
     padding:10px;
 }
-.produto img {width:100%; border-radius:10px;}
-.qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
-.qtd-container button {
-    width:28px; height:28px; border:none; border-radius:6px;
-    background:#2b7bba; color:white; font-size:18px; font-weight:bold;
+.produto img {
+    width:100%;
+    height:auto;
+    border-radius:10px;
+    object-fit:contain; /* ✅ Mantém proporção original */
 }
 .qtd-container input {
     width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px;
@@ -328,4 +328,5 @@ function enviarWhatsApp() {
 
 </body>
 </html>
+
 
