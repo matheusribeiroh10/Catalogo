@@ -2,163 +2,118 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f7f7f7;
-  text-align: center;
-}
-header {
-  background: #2b7bba;
-  color: white;
-  padding: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-#total {font-size: 15px; font-weight: bold;}
-#marcas-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px;
-}
-.marca-btn {
-  flex: 1 1 120px;
-  min-width: 130px;
-  max-width: 160px;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  background: #2b7bba;
-  color: white;
-  cursor: pointer;
-  word-wrap: break-word;
-  white-space: normal;
-}
-.marca-btn.tudo {
-  background: #25d366;
-  font-weight: bold;
-}
-#produtos-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  padding: 12px;
-  max-width: 700px;
-  margin: auto;
-}
-.produto {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #fafafa;
+  }
 
-/* 🔹 ALTERADO: todas as imagens têm tamanho fixo real, centralizadas e com fundo branco */
-.produto img {
-  width: 100%;
-  height: 160px;
-  object-fit: contain;      /* mantém proporção sem cortar */
-  background: white;        /* fundo branco uniforme */
-  border: 1px solid #eee;   /* moldura leve */
-  border-radius: 10px;
-  display: block;
-  margin-bottom: 8px;
-}
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+  }
 
-.qtd-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 5px;
-}
-.qtd-container button {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 6px;
-  background: #2b7bba;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-}
-.qtd-container input {
-  width: 40px;
-  text-align: center;
-  margin: 0 5px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  pointer-events: none;
-}
-button#enviar {
-  background: #25d366;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button#voltar {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.hidden {display: none;}
+  header h1 {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  header .total {
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .produto {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    padding: 10px;
+    text-align: center;
+  }
+
+  .produto img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+  }
+
+  .produto h3 {
+    margin: 8px 0 4px;
+    font-size: 15px;
+  }
+
+  .produto p {
+    margin: 2px 0;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .qtd-controle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 5px;
+  }
+
+  .qtd-controle button {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .qtd-controle span {
+    min-width: 25px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  #enviar {
+    display: block;
+    margin: 15px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #enviar:hover {
+    background: #218838;
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
-  <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
-  <button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
+  <button onclick="voltarMarcas()" style="background:#ffc107;color:black;border:none;padding:6px 10px;border-radius:5px;cursor:pointer;">← Voltar</button>
+  <h1>Catálogo Digital</h1>
+  <div class="total" id="total">Total: R$ 0,00</div>
 </header>
 
-<!-- TELA 1: MARCAS -->
-<div id="tela-marcas">
-  <h3>Escolha uma Marca</h3>
-  <div id="marcas-container">
-    <button class="marca-btn tudo" onclick="mostrarProdutos('Tudo')">Tudo</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Bauducco')">Bauducco</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Danone')">Danone</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Divinitos')">Divinitos</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Elma Chips')">Elma Chips</button>
-    <button class="marca-btn" onclick="mostrarProdutos('FRITOP')">FRITOP</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Frutap')">Frutap</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Kremoso')">Kremoso</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Nestlé')">Nestlé</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Oz')">Oz Pipocas</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Rebeka')">Rebeka Pudim</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Rei da Massa')">Rei da Massa</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Sacola')">Sacolas</button>
-  </div>
-</div>
+<div class="catalogo" id="catalogo"></div>
 
-<!-- TELA 2: PRODUTOS -->
-<div id="tela-produtos" class="hidden">
-  <h3 id="titulo-marca"></h3>
-  <div id="produtos-container"></div>
-</div>
+<button id="enviar" onclick="enviarPedido()">📦 Enviar Pedido</button>
 
 <script>
 const produtos = [
@@ -316,69 +271,63 @@ const produtos = [
 
 let carrinho = {};
 
-function mostrarProdutos(marca) {
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.remove("hidden");
-  document.getElementById("titulo-marca").textContent =
-    marca === "Tudo" ? "Todos os Produtos" : "Marca: " + marca;
-
-  const container = document.getElementById("produtos-container");
-  container.innerHTML = "";
-
-  produtos
-    .filter(p => marca === "Tudo" || p.marca === marca)
-    .forEach(prod => {
-      const div = document.createElement("div");
-      div.className = "produto";
-      div.innerHTML = `
-        <img src="${prod.imagem}" alt="${prod.descricao}">
-        <h4>${prod.descricao}</h4>
-        <small>(${prod.codigo})</small>
-        <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
-        <div class="qtd-container">
-          <button onclick="alterarQtd('${prod.codigo}', -1)">-</button>
-          <input id="qtd-${prod.codigo}" value="0">
-          <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
-        </div>
-      `;
-      container.appendChild(div);
-    });
+function carregarCatalogo() {
+  const area = document.getElementById("catalogo");
+  area.innerHTML = "";
+  produtos.forEach(prod => {
+    const div = document.createElement("div");
+    div.className = "produto";
+    div.innerHTML = `
+      <img src="${prod.imagem}" alt="${prod.nome}">
+      <h3>${prod.nome}</h3>
+      <p><b>Cód:</b> ${prod.codigo}</p>
+      <p><b>Preço:</b> R$ ${prod.preco.toFixed(2)}</p>
+      <div class="qtd-controle">
+        <button onclick="alterarQtd('${prod.codigo}', -1)">−</button>
+        <span id="qtd-${prod.codigo}">0</span>
+        <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
+      </div>
+    `;
+    area.appendChild(div);
+  });
 }
 
-function mostrarMarcas() {
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-marcas").classList.remove("hidden");
-}
-
-function alterarQtd(codigo, delta) {
-  const input = document.getElementById(`qtd-${codigo}`);
-  let qtd = parseInt(input.value) + delta;
-  if (qtd < 0) qtd = 0;
-  input.value = qtd;
-  const prod = produtos.find(p => p.codigo === codigo);
-  if (qtd > 0) carrinho[codigo] = {...prod, qtd};
-  else delete carrinho[codigo];
+function alterarQtd(cod, delta) {
+  if (!carrinho[cod]) carrinho[cod] = 0;
+  carrinho[cod] = Math.max(0, carrinho[cod] + delta);
+  document.getElementById(`qtd-${cod}`).textContent = carrinho[cod];
   atualizarTotal();
 }
 
 function atualizarTotal() {
   let total = 0;
-  for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
-  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
+  for (const cod in carrinho) {
+    const produto = produtos.find(p => p.codigo === cod);
+    total += produto.preco * carrinho[cod];
+  }
+  document.getElementById("total").textContent = `Total: R$ ${total.toFixed(2)}`;
 }
 
-function enviarWhatsApp() {
-  if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
-  let msg = "🛒 *Pedido:*%0A";
-  for (let c in carrinho) {
-    const p = carrinho[c];
-    msg += `• ${p.descricao} (${p.codigo}) - ${p.qtd} un.%0A`;
+function enviarPedido() {
+  let texto = "🛒 *Pedido:*\n";
+  let total = 0;
+  for (const cod in carrinho) {
+    if (carrinho[cod] > 0) {
+      const p = produtos.find(x => x.codigo === cod);
+      texto += `• ${p.nome} (Cód: ${p.codigo}) - ${carrinho[cod]} un.\n`;
+      total += p.preco * carrinho[cod];
+    }
   }
-  const total = Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
-  msg += `%0A💰 *Total:* R$ ${total.toFixed(2)}`;
-  const url = "https://wa.me/5519992394899?text=" + msg;
-  window.open(url, "_blank");
+  texto += `\n💰 Total: R$ ${total.toFixed(2)}`;
+  const msg = encodeURIComponent(texto);
+  window.open(`https://wa.me/5519992394899?text=${msg}`, "_blank");
 }
+
+function voltarMarcas() {
+  window.location.href = "index.html"; // ou sua página de marcas
+}
+
+carregarCatalogo();
 </script>
 
 </body>
