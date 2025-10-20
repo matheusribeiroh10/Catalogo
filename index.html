@@ -76,24 +76,11 @@ button#voltar {
 </head>
 <body>
 
-<header class="flex items-center justify-between p-4 bg-white shadow">
-  <!-- Botão Voltar -->
-  <button onclick="voltarMarcas()" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
-    ⬅️ Voltar para Marcas
-  </button>
-
-  <!-- Título central -->
-  <h1 class="text-xl font-bold text-gray-800 text-center flex-1">
-    Catálogo Digital
-  </h1>
-
-  <!-- Versão + Botão Enviar -->
-  <div class="flex flex-col items-center">
-    <span class="text-xs text-gray-500 mb-1">v1.4</span>
-    <button onclick="enviarPedido()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">
-      📤 Enviar Pedido
-    </button>
-  </div>
+<header>
+  <span class="text-xs text-gray-500 mb-1">v1.4</span>
+  <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
+  <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
+  <button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
 </header>
 
 
@@ -352,6 +339,7 @@ function enviarWhatsApp() {
 
 </body>
 </html>
+
 
 
 
