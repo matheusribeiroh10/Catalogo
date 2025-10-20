@@ -1,339 +1,209 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Catálogo Digital</title>
-<style>
-body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
-header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
-        position:sticky; top:0; z-index:10; display:flex; justify-content:space-between;
-        align-items:center;}
-#total {font-size:15px; font-weight:bold;}
-#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px;}
-.marca-btn {
-    flex: 1 1 120px;
-    min-width: 130px;
-    max-width: 160px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    font-size:14px;
-    background:#2b7bba;
-    color:white;
-    cursor:pointer;
-    word-wrap:break-word;
-    white-space:normal;
-}
-.marca-btn.tudo {
-    background:#25d366;
-    font-weight:bold;
-}
-#produtos-container {
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    padding:12px;
-    max-width:700px;
-    margin:auto;
-}
-.produto {
-    background:white;
-    border-radius:12px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    padding:10px;
-}
-.produto img {
-    width: 100%;
-    height: 160px;        /* altura fixa */
-    object-fit: contain;  /* mantém proporção sem cortar */
-    border-radius: 10px;
-    background: #fff;     /* fundo neutro para imagens pequenas */
-}
-.qtd-container input {
-    width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px;
-    pointer-events:none;
-}
-button#enviar {
-    background:#25d366; color:white; border:none;
-    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
-}
-button#voltar {
-    background:#e74c3c; color:white; border:none;
-    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
-}
-.hidden {display:none;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Catálogo Digital</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f6f6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .total {
+      font-weight: bold;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+    }
+
+    .catalogo {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      padding: 15px;
+    }
+
+    .produto {
+      background-color: white;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .produto img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .produto h3 {
+      font-size: 16px;
+      margin: 8px 0 4px;
+    }
+
+    .produto p {
+      font-size: 14px;
+      color: #444;
+      margin: 4px 0;
+    }
+
+    .qtd-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .qtd-controls button {
+      background-color: #007bff;
+      color: white;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+    }
+
+    .qtd {
+      font-weight: bold;
+      min-width: 24px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    #enviarPedido {
+      background-color: #28a745;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .catalogo {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
-  <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
-  <button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
-</header>
+  <header>
+    <button onclick="voltarMarcas()" style="background:#ffc107; color:#000; padding:8px 12px;">⬅ Voltar</button>
+    <h1>Catálogo Digital</h1>
+    <div>
+      <span class="total" id="total">Total: R$ 0,00</span>
+      <button id="enviarPedido">Enviar Pedido</button>
+    </div>
+  </header>
 
-<!-- TELA 1: MARCAS -->
-<div id="tela-marcas">
-  <h3>Escolha uma Marca</h3>
-  <div id="marcas-container">
-    <button class="marca-btn tudo" onclick="mostrarProdutos('Tudo')">Tudo</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Bauducco')">Bauducco</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Danone')">Danone</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Divinitos')">Divinitos</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Elma Chips')">Elma Chips</button>
-    <button class="marca-btn" onclick="mostrarProdutos('FRITOP')">FRITOP</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Frutap')">Frutap</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Kremoso')">Kremoso</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Nestlé')">Nestlé</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Oz')">Oz Pipocas</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Rebeka')">Rebeka Pudim</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Rei da Massa')">Rei da Massa</button>
-    <button class="marca-btn" onclick="mostrarProdutos('Sacola')">Sacolas</button>
-  </div>
-</div>
+  <main>
+    <div class="catalogo" id="catalogo"></div>
+  </main>
 
-<!-- TELA 2: PRODUTOS -->
-<div id="tela-produtos" class="hidden">
-  <h3 id="titulo-marca"></h3>
-  <div id="produtos-container"></div>
-</div>
+  <script>
+    let produtos = [];
+    let carrinho = {};
 
-<script>
-// === PRODUTOS EXEMPLO (pode trocar pelos seus ou usar JSON depois) ===
-const produtos = [
-{"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
-{"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"},
-{"Código":"142","descricao":"Danette Bd 540G Choc.","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/1Xguy2c.png"},
-{"Código":"143","descricao":"Danette Bd 540G Branco","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/RDUQAqa.png"},
-{"Código":"45","descricao":"Danoninho MOR","marca":"Danone","valor":118.8,"imagem":"https://imgur.com/D0pQUZg.png"},
-{"Código":"49","descricao":"Danoninho Multi","marca":"Danone","valor":118.8,"imagem":"https://imgur.com/bY6Gax8.png"},
-{"Código":"126","descricao":"Danoninho Levar","marca":"Danone","valor":45,"imagem":"https://imgur.com/xi1IES3.png"},
-{"Código":"127","descricao":"Dan Levar Mor Ban","marca":"Danone","valor":45,"imagem":"https://imgur.com/ov9LnqT.png"},
-{"Código":"138","descricao":"Levar Ice Mix Mor 70G","marca":"Danone","valor":36,"imagem":"https://imgur.com/CP08KEj.png"},
-{"Código":"335","descricao":"Polpa Kids Mor C/1","marca":"Danone","valor":67.5,"imagem":"https://imgur.com/bkoRBCZ.png"},
-{"Código":"336","descricao":"Polpa Kids Mçã/Ban","marca":"Danone","valor":67.5,"imagem":"https://imgur.com/wFnxfZk.png"},
-{"Código":"1032","descricao":"Polpa Mor Dan","marca":"Danone","valor":60,"imagem":"https://imgur.com/r7XlbIP.png"},
-{"Código":"1033","descricao":"Polpa Mix Frutas Dan","marca":"Danone","valor":60,"imagem":"https://imgur.com/dV5xInC.png"},
-{"Código":"960","descricao":"GFAO Kids Liq. Mor 800G","marca":"Danone","valor":129,"imagem":"https://imgur.com/p0rQf29.png"},
-{"Código":"962","descricao":"GFAO Kids Liq. B/Ma 800G","marca":"Danone","valor":129,"imagem":"https://imgur.com/IsEg8px.png"},
-{"Código":"315","descricao":"Gfão Activ Aveia 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/mbc7AhJ.png"},
-{"Código":"299","descricao":"Gfão Activ Mor 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/jAcfGSK.png"},
-{"Código":"103","descricao":"Gfão Activ Ameixa 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/HcGxDn0.png"},
-{"Código":"183","descricao":"Act Café Quinoa Fts Verm","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/emM1mz6.png"},
-{"Código":"1181","descricao":"Act Café M. Lin Mor","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/RFyUk1F.png"},
-{"Código":"169","descricao":"Act Café M Am/Ma","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/rxUGmRW.png"},
-{"Código":"189","descricao":"Activ Mor 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/uX3dsRg.png"},
-{"Código":"188","descricao":"Activ Ameixa 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/yfwNaRy.png"},
-{"Código":"190","descricao":"Activ Mamão 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/Z6OwkVQ.png"},
-{"Código":"591","descricao":"Natur Dan Integral","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/CqW0z4r.png"},
-{"Código":"592","descricao":"Natur Dan Lar Cen Mel","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/rpPoHzk.png"},
-{"Código":"593","descricao":"Natur Dan Mel","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/q0TqBHE.png"},
-{"Código":"257","descricao":"Grego Light Or Mor 510G","marca":"Danone","valor":84.8,"imagem":"https://imgur.com/8bCw7Bc.png"},
-{"Código":"254","descricao":"Grego Or Ftas Verm 510G","marca":"Danone","valor":81.6,"imagem":"https://imgur.com/JHucpl7.png"},
-{"Código":"118","descricao":"Corpus 540G Mor","marca":"Danone","valor":67.04,"imagem":"https://imgur.com/40vrgxG.png"},
-{"Código":"205","descricao":"Yopro Choc. Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/RY5oBZz.png"},
-{"Código":"214","descricao":"Yopro Mor 24","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/4eegrWX.png"},
-{"Código":"209","descricao":"Yopro Coco/B Doce","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/QOkbtfW.png"},
-{"Código":"217","descricao":"Yopro Banana Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/4LSkkFE.png"},
-{"Código":"242","descricao":"Yopro HAVANNA Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/sLpK3CU.png"},
-{"Código":"244","descricao":"Yopro BAUNILHA Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/OPCOexl.png"},
-{"Código":"2494","descricao":"FTP Torta Choc.","marca":"Frutap","valor":30,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2495","descricao":"FTP Torta MOR","marca":"Frutap","valor":30,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2551","descricao":"FTP Torta Mrcujá","marca":"Frutap","valor":30,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2496","descricao":"FTP Torta Banoffee","marca":"Frutap","valor":30,"imagem":"https://via.placeholder.com/120"},
-{"Código":"10","descricao":"Sobr Branca Ftap","marca":"Frutap","valor":31.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"4","descricao":"Sobr. Choc. Bnate","marca":"Frutap","valor":25.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1760","descricao":"Flan Bnate Mor","marca":"Frutap","valor":26.16,"imagem":"https://via.placeholder.com/120"},
-{"Código":"297","descricao":"Flan Bonate Baunilha","marca":"Frutap","valor":26.16,"imagem":"https://via.placeholder.com/120"},
-{"Código":"27","descricao":"Flan Ftap Baunilha","marca":"Frutap","valor":31.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"28","descricao":"FLAN FRUTAP MOR","marca":"Frutap","valor":31.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"31","descricao":"Grego Trad Ftap","marca":"Frutap","valor":39.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"33","descricao":"Grego Mor Ftap","marca":"Frutap","valor":39.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"34","descricao":"Grego Fr. Verm Ftap","marca":"Frutap","valor":39.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2490","descricao":"FTP Pedaço MOR","marca":"Frutap","valor":33.36,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2491","descricao":"FTP Pedaço FTS Vermelhas","marca":"Frutap","valor":33.36,"imagem":"https://via.placeholder.com/120"},
-{"Código":"400","descricao":"Pudim Ftap 24X100G","marca":"Frutap","valor":52.8,"imagem":"https://via.placeholder.com/120"},
-{"Código":"164","descricao":"Bnate Cpo Confeito","marca":"Frutap","valor":66,"imagem":"https://via.placeholder.com/120"},
-{"Código":"38","descricao":"Bicamada Ftlac C/24","marca":"Frutap","valor":33.36,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1073","descricao":"Achocolatado Ftap 27 Un","marca":"Frutap","valor":35.1,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1350","descricao":"Polpa Ftlac 360G","marca":"Frutap","valor":33.48,"imagem":"https://via.placeholder.com/120"},
-{"Código":"920","descricao":"Frutilac Polpa MOR/COCO","marca":"Frutap","valor":37.56,"imagem":"https://via.placeholder.com/120"},
-{"Código":"65","descricao":"Polpa Ftlac Mor 480","marca":"Frutap","valor":37.56,"imagem":"https://via.placeholder.com/120"},
-{"Código":"52","descricao":"Polpa Ftlac Fts 480G","marca":"Frutap","valor":37.56,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8625","descricao":"Polpa Patati Patata 360G","marca":"Frutap","valor":43.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"4017","descricao":"Frutapinho Petit Choc","marca":"Frutap","valor":56.28,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1056","descricao":"Petit Ftap Mor","marca":"Frutap","valor":57.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"37","descricao":"Petit Ftap Ban/Maça","marca":"Frutap","valor":57.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"42","descricao":"Gfinha Ftlac Mor","marca":"Frutap","valor":30.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"44","descricao":"Gfinha Ftlac Frutas VERM","marca":"Frutap","valor":30.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"43","descricao":"Gfinha Ftlac S.Fruts","marca":"Frutap","valor":30.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"70","descricao":"Ferm 170G Trad. Ftap","marca":"Frutap","valor":38.4,"imagem":"https://via.placeholder.com/120"},
-{"Código":"76","descricao":"Ferm 170G Uva Ftap","marca":"Frutap","valor":38.4,"imagem":"https://via.placeholder.com/120"},
-{"Código":"71","descricao":"Fer 170G Laran Ftap","marca":"Frutap","valor":38.4,"imagem":"https://via.placeholder.com/120"},
-{"Código":"73","descricao":"Fer 170G MOR Ftap","marca":"Frutap","valor":38.4,"imagem":"https://via.placeholder.com/120"},
-{"Código":"187","descricao":"Bnate Ferm 130G","marca":"Frutap","valor":30,"imagem":"https://via.placeholder.com/120"},
-{"Código":"460","descricao":"Cx FERMENTADO Patati Patata","marca":"Frutap","valor":51.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"41","descricao":"Gfão Ferm Ftap 850","marca":"Frutap","valor":90,"imagem":"https://via.placeholder.com/120"},
-{"Código":"98","descricao":"Gfão IOG Mor 900 Ftp","marca":"Frutap","valor":83.88,"imagem":"https://via.placeholder.com/120"},
-{"Código":"82","descricao":"Gfão Açai/Ban Ftap","marca":"Frutap","valor":83.88,"imagem":"https://via.placeholder.com/120"},
-{"Código":"75","descricao":"Gfão Ftlac 850 Mor","marca":"Frutap","valor":71.88,"imagem":"https://via.placeholder.com/120"},
-{"Código":"77","descricao":"Gfão 1,2 K Ftlac Mor","marca":"Frutap","valor":47.7,"imagem":"https://via.placeholder.com/120"},
-{"Código":"2015","descricao":"Natural Trad. Ftap","marca":"Frutap","valor":46.8,"imagem":"https://via.placeholder.com/120"},
-{"Código":"210","descricao":"Requeijão Ftap Amido","marca":"Frutap","valor":111.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"322","descricao":"Frutilac Requeijão 175G","marca":"Frutap","valor":95.76,"imagem":"https://via.placeholder.com/120"},
-{"Código":"324","descricao":"Frutap Pouch Petit Mor","marca":"Frutap","valor":24.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"386","descricao":"Frutap Pouch Fermentado","marca":"Frutap","valor":24.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"300","descricao":"Pudim Rebeka","marca":"Rebeka","valor":61.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1840","descricao":"Rebeka Brigadeirão 80g","marca":"Rebeka","valor":90,"imagem":"https://via.placeholder.com/120"},
-{"Código":"6002","descricao":"Krem Gfinha MOR 130g","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"6003","descricao":"Krem Gfinha Coco","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"6009","descricao":"Krem Gfinha Ameixa","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"6008","descricao":"Krem Gfinha Sal Frutas","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"6007","descricao":"Krem Gfinha Frts Verm 130g","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"390","descricao":"Kremoso Saco MOR","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"391","descricao":"Kremoso Saco Frutas Verm","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"389","descricao":"Kremoso Saco Ameixa 550G","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"392","descricao":"Kremoso Saco Salada Fr","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"393","descricao":"Kremoso Saco Coco","marca":"Kremoso","valor":20,"imagem":"https://via.placeholder.com/120"},
-{"Código":"10100","descricao":"CHANDELLE Choc 360g","marca":"Nestlé","valor":120.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"10003","descricao":"Chandelle Branco 360G","marca":"Nestlé","valor":120.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"10008","descricao":"Chamytinho 450G","marca":"Nestlé","valor":122.22,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8921","descricao":"Pão Visc. Trad","marca":"Bauducco","valor":39.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8922","descricao":"Pão BAUD. Integral","marca":"Bauducco","valor":45,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8934","descricao":"Pão Baud. Tradic.","marca":"Bauducco","valor":42,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8931","descricao":"Bolinho Roll Choc","marca":"Bauducco","valor":148.5,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8927","descricao":"Bol Duo Choc. 6X15","marca":"Bauducco","valor":135,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8923","descricao":"Bolin Dupl Ch 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8926","descricao":"Bol Baun C/Mor 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8928","descricao":"Bol Bau Choc.9X16","marca":"Bauducco","valor":223.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8935","descricao":"Bolin GOTAS Ch 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"5982","descricao":"Ruflle Churras 32GX56","marca":"Elma Chips","valor":167.44,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8967","descricao":"Ruflles Orig. 32Gx56","marca":"Elma Chips","valor":167.44,"imagem":"https://via.placeholder.com/120"},
-{"Código":"5981","descricao":"Ruflles Cebola Salsa 32GX56","marca":"Elma Chips","valor":167.44,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8960","descricao":"Fandan Presunto 48X37G","marca":"Elma Chips","valor":108,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8962","descricao":"Fandangos Queijo 48X37G","marca":"Elma Chips","valor":108,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8957","descricao":"Cheetos Onda 45G C/48","marca":"Elma Chips","valor":151.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8956","descricao":"Cheetos Lua C/48","marca":"Elma Chips","valor":151.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8997","descricao":"Cheetos Mix 41Gx48","marca":"Elma Chips","valor":151.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8998","descricao":"Cheetos Bola De Queijo","marca":"Elma Chips","valor":151.2,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8958","descricao":"Doritos Nacho 58X37G","marca":"Elma Chips","valor":214.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8959","descricao":"Cebolitos 48X36g","marca":"Elma Chips","valor":143.52,"imagem":"https://via.placeholder.com/120"},
-{"Código":"9004","descricao":"Baconzitos 31gX58","marca":"Elma Chips","valor":173.42,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7871","descricao":"Torcida Costela 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7705","descricao":"Torcida Pão Alho 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8999","descricao":"Torcida Vinagrete 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7874","descricao":"Torcida Bacon 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7879","descricao":"Torcida Queijo 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7872","descricao":"Torcida Cebola 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7878","descricao":"Torcida Churras 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"7870","descricao":"Torcida Pimenta 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://via.placeholder.com/120"},
-{"Código":"1202","descricao":"Todynho C/27","marca":"Elma Chips","valor":68.58,"imagem":"https://via.placeholder.com/120"},
-{"Código":"868","descricao":"FTOP  50g Btatão PEQ Tradic","marca":"FRITOP","valor":57.6,"imagem":"https://via.placeholder.com/120"},
-{"Código":"874","descricao":"FTOP  Polvilho 180g Grande","marca":"FRITOP","valor":48.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"940","descricao":"FTOP  200g Grande Churras","marca":"FRITOP","valor":48.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"935","descricao":"FTOP  200g Grande Ceb/Salsa","marca":"FRITOP","valor":48.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"624","descricao":"SALG. FOFINHO Bacon 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"625","descricao":"SALG. FOFINHO Cebola 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"629","descricao":"SALG. FOFINHO Churasco 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"630","descricao":"SALG. FOFIN Costela Lim 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"631","descricao":"SALG. FOFINHO Pizza 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"632","descricao":"SALG. FOFINHO Presunto 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"635","descricao":"SALG. FOFINHO Queijo 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"673","descricao":"SALG. FOFIN Requeijão 40g","marca":"Divinitos","valor":8.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"4579","descricao":"Pipoca SAL Oz 60G C/ 10","marca":"Oz","valor":9.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"4602","descricao":"Pipoca Caramel. Preta 50g","marca":"Oz","valor":9.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"4561","descricao":"Pipoca Doce Oz 60G C/ 10","marca":"Oz","valor":9.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8991","descricao":"Massa Lasanha Fardo C/ 10","marca":"Rei da Massa","valor":49.5,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8990","descricao":"Massa Nhoque Fardo C/ 10","marca":"Rei da Massa","valor":59.9,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8992","descricao":"Massa Pastel Rolo 500G C/10","marca":"Rei da Massa","valor":44.5,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8993","descricao":"Un Massa P. Disco 500G","marca":"Rei da Massa","valor":5.5,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8975","descricao":"Sacola Bca 30X40 - 1,2 Kilo","marca":"Sacola","valor":28,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8970","descricao":"Sacola Verde 30X40 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8971","descricao":"Sacola Verde 40X50 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://via.placeholder.com/120"},
-{"Código":"8972","descricao":"Sacola Verde 45X60 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://via.placeholder.com/120"}
-];
+    async function carregarProdutos() {
+      try {
+        const response = await fetch('produtos.json');
+        produtos = await response.json();
+        exibirProdutos(produtos);
+      } catch (e) {
+        console.error("Erro ao carregar produtos.json:", e);
+      }
+    }
 
-let carrinho = {};
+    function exibirProdutos(lista) {
+      const catalogo = document.getElementById("catalogo");
+      catalogo.innerHTML = "";
 
-// === MOSTRAR PRODUTOS ===
-function mostrarProdutos(marca) {
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.remove("hidden");
-  document.getElementById("titulo-marca").textContent =
-    marca === "Tudo" ? "Todos os Produtos" : "Marca: " + marca;
+      lista.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "produto";
+        div.innerHTML = `
+          <img src="${p.imagem}" alt="${p.nome}">
+          <h3>${p.nome}</h3>
+          <p><strong>${p.codigo}</strong></p>
+          <p>R$ ${p.preco.toFixed(2)}</p>
+          <div class="qtd-controls">
+            <button onclick="alterarQtd(${index}, -1)">-</button>
+            <span class="qtd" id="qtd-${index}">0</span>
+            <button onclick="alterarQtd(${index}, 1)">+</button>
+          </div>
+        `;
+        catalogo.appendChild(div);
+      });
+    }
 
-  const container = document.getElementById("produtos-container");
-  container.innerHTML = "";
+    function alterarQtd(index, delta) {
+      const produto = produtos[index];
+      carrinho[produto.codigo] = (carrinho[produto.codigo] || 0) + delta;
+      if (carrinho[produto.codigo] < 0) carrinho[produto.codigo] = 0;
+      document.getElementById(`qtd-${index}`).innerText = carrinho[produto.codigo];
+      atualizarTotal();
+    }
 
-  produtos
-    .filter(p => marca === "Tudo" || p.marca === marca)
-    .forEach(prod => {
-      const div = document.createElement("div");
-      div.className = "produto";
-      div.innerHTML = `
-        <img src="${prod.imagem}" alt="${prod.descricao}">
-        <h4>${prod.descricao}</h4>
-        <small>(${prod.codigo})</small>
-        <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
-        <div class="qtd-container">
-          <button onclick="alterarQtd('${prod.codigo}', -1)">-</button>
-          <input id="qtd-${prod.codigo}" value="0">
-          <button onclick="alterarQtd('${prod.codigo}', 1)">+</button>
-        </div>
-      `;
-      container.appendChild(div);
+    function atualizarTotal() {
+      let total = 0;
+      for (const codigo in carrinho) {
+        const produto = produtos.find(p => p.codigo === codigo);
+        if (produto) {
+          total += produto.preco * carrinho[codigo];
+        }
+      }
+      document.getElementById("total").innerText = `Total: R$ ${total.toFixed(2)}`;
+    }
+
+    document.getElementById("enviarPedido").addEventListener("click", () => {
+      let mensagem = "🛒 *Pedido:*\n";
+      let total = 0;
+      for (const codigo in carrinho) {
+        const produto = produtos.find(p => p.codigo === codigo);
+        if (produto && carrinho[codigo] > 0) {
+          mensagem += `• ${produto.nome} (${produto.codigo}) - ${carrinho[codigo]} un.\n`;
+          total += produto.preco * carrinho[codigo];
+        }
+      }
+      mensagem += `\n💰 *Total:* R$ ${total.toFixed(2)}`;
+      const numero = "19992394899";
+      const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+      window.open(url, "_blank");
     });
-}
 
-// === VOLTAR À TELA DE MARCAS ===
-function mostrarMarcas() {
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-marcas").classList.remove("hidden");
-}
+    function voltarMarcas() {
+      window.location.href = "marcas.html";
+    }
 
-// === ALTERAR QUANTIDADE ===
-function alterarQtd(codigo, delta) {
-  const input = document.getElementById(`qtd-${codigo}`);
-  let qtd = parseInt(input.value) + delta;
-  if (qtd < 0) qtd = 0;
-  input.value = qtd;
-  const prod = produtos.find(p => p.codigo === codigo);
-  if (qtd > 0) carrinho[codigo] = {...prod, qtd};
-  else delete carrinho[codigo];
-  atualizarTotal();
-}
-
-// === CALCULAR TOTAL ===
-function atualizarTotal() {
-  let total = 0;
-  for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
-  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
-}
-
-// === ENVIAR WHATSAPP ===
-function enviarWhatsApp() {
-  if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
-  let msg = "🛒 *Pedido:*%0A";
-  for (let c in carrinho) {
-    const p = carrinho[c];
-    msg += `• ${p.descricao} (${p.codigo}) - ${p.qtd} un.%0A`;
-  }
-  const total = Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
-  msg += `%0A💰 *Total:* R$ ${total.toFixed(2)}`;
-  const url = "https://wa.me/5519992394899?text=" + msg;
-  window.open(url, "_blank");
-}
-</script>
+    carregarProdutos();
+  </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
