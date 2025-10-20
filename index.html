@@ -6,71 +6,124 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Catálogo Digital</title>
 <style>
-body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
-header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
-        position:sticky; top:0; z-index:10; display:flex; justify-content:space-between;
-        align-items:center;}
-#total {font-size:15px; font-weight:bold;}
-#marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px;}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f7f7f7;
+  text-align: center;
+}
+header {
+  background: #2b7bba;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#total {font-size: 15px; font-weight: bold;}
+#marcas-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px;
+}
 .marca-btn {
-    flex: 1 1 120px;
-    min-width: 130px;
-    max-width: 160px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    font-size:14px;
-    background:#2b7bba;
-    color:white;
-    cursor:pointer;
-    word-wrap:break-word;
-    white-space:normal;
+  flex: 1 1 120px;
+  min-width: 130px;
+  max-width: 160px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #2b7bba;
+  color: white;
+  cursor: pointer;
+  word-wrap: break-word;
+  white-space: normal;
 }
 .marca-btn.tudo {
-    background:#25d366;
-    font-weight:bold;
+  background: #25d366;
+  font-weight: bold;
 }
 #produtos-container {
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    padding:12px;
-    max-width:700px;
-    margin:auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+  max-width: 700px;
+  margin: auto;
 }
 .produto {
-    background:white;
-    border-radius:12px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    padding:10px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* 🔹 ALTERADO: todas as imagens terão o mesmo tamanho fixo e corte centralizado */
+/* 🔹 ALTERADO: todas as imagens têm tamanho fixo real, centralizadas e com fundo branco */
 .produto img {
-    width: 100%;
-    height: 160px;        /* altura fixa */
-    object-fit: cover;    /* corta excesso e centraliza */
-    border-radius:10px;
+  width: 100%;
+  height: 160px;
+  object-fit: contain;      /* mantém proporção sem cortar */
+  background: white;        /* fundo branco uniforme */
+  border: 1px solid #eee;   /* moldura leve */
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 8px;
 }
 
-.qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
+.qtd-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
 .qtd-container button {
-    width:28px; height:28px; border:none; border-radius:6px;
-    background:#2b7bba; color:white; font-size:18px; font-weight:bold;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: #2b7bba;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
 }
 .qtd-container input {
-    width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px;
-    pointer-events:none;
+  width: 40px;
+  text-align: center;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  pointer-events: none;
 }
 button#enviar {
-    background:#25d366; color:white; border:none;
-    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
+  background: #25d366;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 button#voltar {
-    background:#e74c3c; color:white; border:none;
-    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
 }
-.hidden {display:none;}
+.hidden {display: none;}
 </style>
 </head>
 <body>
@@ -108,7 +161,6 @@ button#voltar {
 </div>
 
 <script>
-// === PRODUTOS EXEMPLO (pode trocar pelos seus ou usar JSON depois) ===
 const produtos = [
 {"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
 {"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"},
@@ -264,7 +316,6 @@ const produtos = [
 
 let carrinho = {};
 
-// === MOSTRAR PRODUTOS ===
 function mostrarProdutos(marca) {
   document.getElementById("tela-marcas").classList.add("hidden");
   document.getElementById("tela-produtos").classList.remove("hidden");
@@ -294,13 +345,11 @@ function mostrarProdutos(marca) {
     });
 }
 
-// === VOLTAR À TELA DE MARCAS ===
 function mostrarMarcas() {
   document.getElementById("tela-produtos").classList.add("hidden");
   document.getElementById("tela-marcas").classList.remove("hidden");
 }
 
-// === ALTERAR QUANTIDADE ===
 function alterarQtd(codigo, delta) {
   const input = document.getElementById(`qtd-${codigo}`);
   let qtd = parseInt(input.value) + delta;
@@ -312,14 +361,12 @@ function alterarQtd(codigo, delta) {
   atualizarTotal();
 }
 
-// === CALCULAR TOTAL ===
 function atualizarTotal() {
   let total = 0;
   for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
   document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
 }
 
-// === ENVIAR WHATSAPP ===
 function enviarWhatsApp() {
   if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
   let msg = "🛒 *Pedido:*%0A";
