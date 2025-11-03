@@ -86,11 +86,11 @@ button#voltar {
 </head>
 <body>
 
-<header>
+<header id="cabecalho">
   <span style="font-size:12px; margin-right:5px;">v1.4</span>
   <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
   <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
-  <button id="enviar" onclick="mostrarCarrinho()">🛒 Carrinho</button>
+  <button id="acao-direita" onclick="mostrarCarrinho()">🛒 Carrinho</button>
 </header>
 
 <!-- TELA 1: MARCAS -->
@@ -125,8 +125,6 @@ button#voltar {
   <h3>🛍️ Meu Carrinho</h3>
   <div id="itens-carrinho"></div>
   <h3 id="total-carrinho">Total: R$ 0,00</h3>
-  <button id="enviar" onclick="enviarWhatsApp()">📦 Enviar Pedido</button>
-  <button id="voltar" onclick="mostrarProdutos('Tudo')">🔙 Continuar Comprando</button>
 </div>
 
 <script>
@@ -139,6 +137,7 @@ let carrinho = {};
 
 // === MOSTRAR PRODUTOS ===
 function mostrarProdutos(marca) {
+  atualizarCabecalho("🔙 Marcas", "🛒 Carrinho", mostrarMarcas, mostrarCarrinho);
   document.getElementById("tela-marcas").classList.add("hidden");
   document.getElementById("tela-carrinho").classList.add("hidden");
   document.getElementById("tela-produtos").classList.remove("hidden");
@@ -168,6 +167,7 @@ function mostrarProdutos(marca) {
 
 // === VOLTAR À TELA DE MARCAS ===
 function mostrarMarcas() {
+  atualizarCabecalho(" ", "🛒 Carrinho", null, mostrarCarrinho);
   document.getElementById("tela-produtos").classList.add("hidden");
   document.getElementById("tela-carrinho").classList.add("hidden");
   document.getElementById("tela-marcas").classList.remove("hidden");
@@ -175,6 +175,7 @@ function mostrarMarcas() {
 
 // === MOSTRAR CARRINHO ===
 function mostrarCarrinho() {
+  atualizarCabecalho("🔙 Marcas", "📦 Enviar", mostrarMarcas, enviarWhatsApp);
   document.getElementById("tela-marcas").classList.add("hidden");
   document.getElementById("tela-produtos").classList.add("hidden");
   document.getElementById("tela-carrinho").classList.remove("hidden");
@@ -210,7 +211,17 @@ function mostrarCarrinho() {
   atualizarTotal();
 }
 
-// === ALTERAR QUANTIDADE (CORRIGIDA) ===
+// === ALTERAR CABEÇALHO ===
+function atualizarCabecalho(txtEsq, txtDir, funcEsq, funcDir) {
+  const btnEsq = document.getElementById("voltar");
+  const btnDir = document.getElementById("acao-direita");
+  btnEsq.innerHTML = txtEsq;
+  btnDir.innerHTML = txtDir;
+  btnEsq.onclick = funcEsq;
+  btnDir.onclick = funcDir;
+}
+
+// === ALTERAR QUANTIDADE ===
 function alterarQtd(codigo, delta, dentroCarrinho = false) {
   const prod = produtos.find(p => p.Código === codigo);
   if (!prod) return;
@@ -222,7 +233,6 @@ function alterarQtd(codigo, delta, dentroCarrinho = false) {
   if (novaQtd > 0) carrinho[codigo] = {...prod, qtd: novaQtd};
   else delete carrinho[codigo];
 
-  // Atualiza apenas os campos existentes (sem recarregar a tela)
   const input1 = document.getElementById(`qtd-${codigo}`);
   const input2 = document.getElementById(`qtd-carrinho-${codigo}`);
   if (input1) input1.value = novaQtd;
