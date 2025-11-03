@@ -39,7 +39,7 @@ header {
 }
 .marca-btn.tudo {background:#25d366; font-weight:bold;}
 #telefone-container {
-    margin:10px auto 0 auto;
+    margin:15px auto 5px auto;
     display:flex; justify-content:center; align-items:center;
     gap:8px; flex-wrap:wrap;
 }
@@ -74,7 +74,7 @@ header {
 
 <header id="cabecalho">
   <!-- ATUALIZAR VERSÃO AQUI -->
-  <span id="versao">v2.0</span>
+  <span id="versao">v1.6</span>
   <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
   <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
   <button id="btnCarrinho" onclick="mostrarCarrinho()">🛒 Carrinho</button>
@@ -82,6 +82,10 @@ header {
 
 <!-- TELA 1: MARCAS -->
 <div id="tela-marcas">
+
+  <!-- ✅ Contato agora acima do texto -->
+  <div id="telefone-container"></div>
+
   <h3>Escolha uma Marca</h3>
   <div id="marcas-container">
     <button class="marca-btn tudo" onclick="mostrarProdutos('Tudo')">Tudo</button>
@@ -98,7 +102,6 @@ header {
     <button class="marca-btn" onclick="mostrarProdutos('Rei da Massa')">Rei da Massa</button>
     <button class="marca-btn" onclick="mostrarProdutos('Sacola')">Sacolas</button>
   </div>
-  <div id="telefone-container"></div>
 </div>
 
 <!-- POPUP -->
