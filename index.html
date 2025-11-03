@@ -200,9 +200,9 @@ function mostrarCarrinho() {
         <span>R$ ${p.valor.toFixed(2)}</span>
       </div>
       <div class="qtd-container">
-        <button onclick="alterarQtd('${p.Código}', -1)">-</button>
-        <input id="qtd-${p.Código}" value="${p.qtd}">
-        <button onclick="alterarQtd('${p.Código}', 1)">+</button>
+        <button onclick="alterarQtd('${p.Código}', -1, true)">-</button>
+        <input id="qtd-carrinho-${p.Código}" value="${p.qtd}">
+        <button onclick="alterarQtd('${p.Código}', 1, true)">+</button>
       </div>
     `;
     container.appendChild(div);
@@ -211,16 +211,26 @@ function mostrarCarrinho() {
 }
 
 // === ALTERAR QUANTIDADE ===
-function alterarQtd(codigo, delta) {
-  const input = document.getElementById(`qtd-${codigo}`);
-  if (!input) return;
-  let qtd = parseInt(input.value) + delta;
-  if (qtd < 0) qtd = 0;
-  input.value = qtd;
+function alterarQtd(codigo, delta, dentroCarrinho = false) {
   const prod = produtos.find(p => p.Código === codigo);
-  if (qtd > 0) carrinho[codigo] = {...prod, qtd};
+  if (!prod) return;
+
+  // Atualiza no carrinho
+  let qtdAtual = carrinho[codigo]?.qtd || 0;
+  let novaQtd = qtdAtual + delta;
+  if (novaQtd < 0) novaQtd = 0;
+
+  if (novaQtd > 0) carrinho[codigo] = {...prod, qtd: novaQtd};
   else delete carrinho[codigo];
+
+  // Atualiza inputs visuais nas duas telas
+  const inputProd = document.getElementById(`qtd-${codigo}`);
+  const inputCarrinho = document.getElementById(`qtd-carrinho-${codigo}`);
+  if (inputProd) inputProd.value = novaQtd;
+  if (inputCarrinho) inputCarrinho.value = novaQtd;
+
   atualizarTotal();
+  if (dentroCarrinho) mostrarCarrinho(); // Atualiza lista ao clicar dentro do carrinho
 }
 
 // === CALCULAR TOTAL ===
@@ -228,7 +238,8 @@ function atualizarTotal() {
   let total = 0;
   for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
   document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
-  document.getElementById("total-carrinho").innerText = "Total: R$ " + total.toFixed(2);
+  const totalCarrinho = document.getElementById("total-carrinho");
+  if (totalCarrinho) totalCarrinho.innerText = "Total: R$ " + total.toFixed(2);
 }
 
 // === ENVIAR WHATSAPP ===
@@ -245,6 +256,6 @@ function enviarWhatsApp() {
   window.open(url, "_blank");
 }
 </script>
-
 </body>
 </html>
+
