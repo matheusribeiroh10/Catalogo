@@ -6,9 +6,21 @@
 <title>Catálogo Digital</title>
 <style>
 body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:center;}
-header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
-        position:sticky; top:0; z-index:10; display:flex; justify-content:space-between;
-        align-items:center;}
+header {
+    background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
+    position:sticky; top:0; z-index:10; display:flex; justify-content:space-between; align-items:center;
+}
+/* ======= CAMPO DE VERSÃO DESTACADO ======= */
+#versao {
+    background:#ffcc00; 
+    color:#000; 
+    font-weight:bold;
+    padding:4px 8px; 
+    border-radius:8px;
+    font-size:13px;
+    margin-right:5px;
+    border:1px solid #333;
+}
 #total {font-size:15px; font-weight:bold;}
 #marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px;}
 .marca-btn {
@@ -36,47 +48,9 @@ header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weig
     border:none; background:#2b7bba; color:white;
     border-radius:8px; padding:6px 10px; cursor:pointer;
 }
-#produtos-container {
-    display:grid; grid-template-columns:repeat(2,1fr);
-    gap:12px; padding:12px; max-width:700px; margin:auto;
-}
-.produto {
-    background:white; border-radius:12px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1); padding:10px;
-}
-.produto img {
-    width:100%; height:160px; object-fit:contain;
-    border-radius:10px; background:#fff;
-}
-.qtd-container {display:flex; align-items:center; justify-content:center; margin-top:5px;}
-.qtd-container button {
-    width:28px; height:28px; border:none; border-radius:6px;
-    background:#2b7bba; color:white; font-size:18px; font-weight:bold;
-    cursor:pointer;
-}
-.qtd-container input {
-    width:40px; text-align:center; margin:0 5px;
-    border:1px solid #ccc; border-radius:6px;
-}
-button#voltar {
-    background:#e74c3c; color:white; border:none;
-    padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer;
-}
-#btnCarrinho {
-    background:white; color:#2b7bba; border:2px solid #2b7bba;
-    font-size:16px; padding:10px 18px; border-radius:10px;
-    font-weight:bold; cursor:pointer;
-}
-#tela-carrinho {padding:15px;}
-.carrinho-item {
-    background:white; border-radius:10px; margin:8px auto; padding:10px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1); max-width:700px;
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-}
-.carrinho-item img {width:60px; height:60px; border-radius:8px; object-fit:contain;}
 .hidden {display:none;}
 
-/* POPUP TELEFONE */
+/* ===== POPUP TELEFONE ===== */
 #popup {
     position:fixed; top:0; left:0; width:100%; height:100%;
     background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
@@ -99,7 +73,8 @@ button#voltar {
 <body>
 
 <header id="cabecalho">
-  <span style="font-size:12px; margin-right:5px;">v1.9</span>
+  <!-- ATUALIZAR VERSÃO AQUI -->
+  <span id="versao">v2.0</span>
   <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
   <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
   <button id="btnCarrinho" onclick="mostrarCarrinho()">🛒 Carrinho</button>
@@ -126,19 +101,6 @@ button#voltar {
   <div id="telefone-container"></div>
 </div>
 
-<!-- TELA 2: PRODUTOS -->
-<div id="tela-produtos" class="hidden">
-  <h3 id="titulo-marca"></h3>
-  <div id="produtos-container"></div>
-</div>
-
-<!-- TELA 3: CARRINHO -->
-<div id="tela-carrinho" class="hidden">
-  <h3>🛍️ Meu Carrinho</h3>
-  <div id="itens-carrinho"></div>
-  <h3 id="total-carrinho">Total: R$ 0,00</h3>
-</div>
-
 <!-- POPUP -->
 <div id="popup" class="hidden">
   <div id="popup-content">
@@ -149,36 +111,17 @@ button#voltar {
 </div>
 
 <script>
-const produtos = [
-  {"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
-  {"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"}
-];
-
-let carrinho = {};
 let telefone = localStorage.getItem("telefone");
 
-// === TELEFONE ===
-function renderTelefone() {
-  const container = document.getElementById("telefone-container");
-  container.innerHTML = telefone 
-    ? `<span>${telefone}</span><button onclick="editarTelefone()">✏️ Editar</button>`
-    : `<span style="color:#666;">Nenhum contato cadastrado</span>`;
-}
-
-function editarTelefone() {
-  telefone = null;
-  localStorage.removeItem("telefone");
-  abrirPopup();
-}
-
+// === POPUP TELEFONE ===
 function abrirPopup() {
   const popup = document.getElementById("popup");
-  popup.classList.remove("hidden");
-  const input = document.getElementById("telefone-input");
-  input.value = "";
-  input.focus();
+  popup.style.display = "flex";
 }
-
+function fecharPopup() {
+  const popup = document.getElementById("popup");
+  popup.style.display = "none";
+}
 function salvarTelefonePopup() {
   const input = document.getElementById("telefone-input");
   const valor = input.value.trim();
@@ -188,7 +131,7 @@ function salvarTelefonePopup() {
   }
   telefone = valor;
   localStorage.setItem("telefone", telefone);
-  document.getElementById("popup").classList.add("hidden");
+  fecharPopup(); // ✅ fecha o popup imediatamente
   renderTelefone();
 }
 
@@ -203,114 +146,23 @@ document.addEventListener("input", e=>{
   }
 });
 
-// === Inicialização ===
-if (!telefone) abrirPopup();
+// === TELEFONE CONTAINER ===
+function renderTelefone(){
+  const container=document.getElementById("telefone-container");
+  container.innerHTML=telefone
+    ? `<span>${telefone}</span><button onclick="editarTelefone()">✏️ Editar</button>`
+    : `<span style="color:#666;">Nenhum contato cadastrado</span>`;
+}
+function editarTelefone(){
+  telefone=null;
+  localStorage.removeItem("telefone");
+  abrirPopup();
+}
+
+// === INICIALIZAÇÃO ===
+if(!telefone) abrirPopup();
 renderTelefone();
-
-// === FUNÇÕES RESTANTES ===
-function mostrarProdutos(marca){
-  atualizarCabecalho("🔙 Marcas","🛒 Carrinho",mostrarMarcas,mostrarCarrinho);
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.remove("hidden");
-  document.getElementById("titulo-marca").textContent=
-  marca==="Tudo"?"Todos os Produtos":"Marca: "+marca;
-  const container=document.getElementById("produtos-container");
-  container.innerHTML="";
-  produtos.filter(p=>marca==="Tudo"||p.marca===marca).forEach(prod=>{
-    const div=document.createElement("div");
-    div.className="produto";
-    div.innerHTML=`
-    <img src="${prod.imagem}">
-    <h4>${prod.descricao}</h4>
-    <small>(${prod.Código})</small>
-    <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
-    <div class="qtd-container">
-      <button onclick="alterarQtd('${prod.Código}',-1)">-</button>
-      <input id="qtd-${prod.Código}" value="${carrinho[prod.Código]?.qtd||0}">
-      <button onclick="alterarQtd('${prod.Código}',1)">+</button>
-    </div>`;
-    container.appendChild(div);
-  });
-}
-
-function mostrarMarcas(){
-  atualizarCabecalho(" ","🛒 Carrinho",null,mostrarCarrinho);
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.add("hidden");
-  document.getElementById("tela-marcas").classList.remove("hidden");
-}
-
-function mostrarCarrinho(){
-  atualizarCabecalho("🔙 Marcas","📦 Enviar",mostrarMarcas,enviarWhatsApp);
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.remove("hidden");
-  const container=document.getElementById("itens-carrinho");
-  container.innerHTML="";
-  if(Object.keys(carrinho).length===0){
-    container.innerHTML="<p>Seu carrinho está vazio 🛒</p>";
-    document.getElementById("total-carrinho").textContent="Total: R$ 0,00";
-    return;
-  }
-  for(let c in carrinho){
-    const p=carrinho[c];
-    const div=document.createElement("div");
-    div.className="carrinho-item";
-    div.innerHTML=`
-    <img src="${p.imagem}">
-    <div style="flex:1;text-align:left;">
-      <b>${p.descricao}</b><br>
-      <small>(${p.Código})</small><br>
-      <span>R$ ${p.valor.toFixed(2)}</span>
-    </div>
-    <div class="qtd-container">
-      <button onclick="alterarQtd('${p.Código}',-1,true)">-</button>
-      <input id="qtd-carrinho-${p.Código}" value="${p.qtd}">
-      <button onclick="alterarQtd('${p.Código}',1,true)">+</button>
-    </div>`;
-    container.appendChild(div);
-  }
-  atualizarTotal();
-}
-
-function atualizarCabecalho(txtEsq,txtDir,funcEsq,funcDir){
-  const btnEsq=document.getElementById("voltar");
-  const btnDir=document.getElementById("btnCarrinho");
-  btnEsq.innerHTML=txtEsq; btnDir.innerHTML=txtDir;
-  btnEsq.onclick=funcEsq; btnDir.onclick=funcDir;
-}
-
-function alterarQtd(codigo,delta,dentroCarrinho=false){
-  const prod=produtos.find(p=>p.Código===codigo); if(!prod)return;
-  let qtdAtual=carrinho[codigo]?.qtd||0; let novaQtd=qtdAtual+delta;
-  if(novaQtd<0)novaQtd=0;
-  if(novaQtd>0)carrinho[codigo]={...prod,qtd:novaQtd}; else delete carrinho[codigo];
-  const input1=document.getElementById(`qtd-${codigo}`);
-  const input2=document.getElementById(`qtd-carrinho-${codigo}`);
-  if(input1)input1.value=novaQtd; if(input2)input2.value=novaQtd;
-  atualizarTotal();
-}
-
-function atualizarTotal(){
-  let total=0; for(let c in carrinho) total+=carrinho[c].valor*carrinho[c].qtd;
-  document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);
-  const totalCarrinho=document.getElementById("total-carrinho");
-  if(totalCarrinho) totalCarrinho.innerText="Total: R$ "+total.toFixed(2);
-}
-
-function enviarWhatsApp(){
-  if(!telefone) return alert("Informe seu número antes de enviar o pedido!");
-  if(Object.keys(carrinho).length===0)return alert("Nenhum item no pedido!");
-  let msg="🛒 *Pedido:*%0A";
-  for(let c in carrinho){const p=carrinho[c];
-    msg+=`• ${p.descricao} (${p.Código}) - ${p.qtd} un.%0A`;}
-  const total=Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
-  msg+=`%0A💰 *Total:* R$ ${total.toFixed(2)}%0A📞 *Contato:* ${telefone}`;
-  const url="https://wa.me/5519992394899?text="+msg;
-  window.open(url,"_blank");
-}
 </script>
+
 </body>
 </html>
-
