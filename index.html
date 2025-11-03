@@ -210,12 +210,11 @@ function mostrarCarrinho() {
   atualizarTotal();
 }
 
-// === ALTERAR QUANTIDADE ===
+// === ALTERAR QUANTIDADE (CORRIGIDA) ===
 function alterarQtd(codigo, delta, dentroCarrinho = false) {
   const prod = produtos.find(p => p.Código === codigo);
   if (!prod) return;
 
-  // Atualiza no carrinho
   let qtdAtual = carrinho[codigo]?.qtd || 0;
   let novaQtd = qtdAtual + delta;
   if (novaQtd < 0) novaQtd = 0;
@@ -223,14 +222,13 @@ function alterarQtd(codigo, delta, dentroCarrinho = false) {
   if (novaQtd > 0) carrinho[codigo] = {...prod, qtd: novaQtd};
   else delete carrinho[codigo];
 
-  // Atualiza inputs visuais nas duas telas
-  const inputProd = document.getElementById(`qtd-${codigo}`);
-  const inputCarrinho = document.getElementById(`qtd-carrinho-${codigo}`);
-  if (inputProd) inputProd.value = novaQtd;
-  if (inputCarrinho) inputCarrinho.value = novaQtd;
+  // Atualiza apenas os campos existentes (sem recarregar a tela)
+  const input1 = document.getElementById(`qtd-${codigo}`);
+  const input2 = document.getElementById(`qtd-carrinho-${codigo}`);
+  if (input1) input1.value = novaQtd;
+  if (input2) input2.value = novaQtd;
 
   atualizarTotal();
-  if (dentroCarrinho) mostrarCarrinho(); // Atualiza lista ao clicar dentro do carrinho
 }
 
 // === CALCULAR TOTAL ===
@@ -256,6 +254,6 @@ function enviarWhatsApp() {
   window.open(url, "_blank");
 }
 </script>
+
 </body>
 </html>
-
