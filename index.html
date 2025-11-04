@@ -132,68 +132,91 @@ button#voltar {
   </div>
 </div>
 
-<!-- Popup de contato -->
-<div id="popup" class="hidden">
+<!-- POPUP DE CONTATO -->
+<div id="popup" class="hidden" aria-hidden="true">
   <div id="popup-content">
     <h4>Informe seu número de contato</h4>
-    <input id="telefone-input" placeholder="(DDD) 99999-9999" maxlength="15">
-    <button onclick="salvarTelefone()">Salvar contato</button>
+    <input id="telefone-input" placeholder="(19) 99999-9999" maxlength="15" inputmode="numeric">
+    <button id="btnSalvarContato">Salvar contato</button>
   </div>
 </div>
 
-<!-- Telas de produtos e carrinho -->
-<div id="tela-produtos" class="hidden">
-  <h3 id="titulo-marca"></h3>
-  <div id="produtos-container"></div>
-</div>
-
-<div id="tela-carrinho" class="hidden">
-  <h3>🛍️ Meu Carrinho</h3>
-  <div id="itens-carrinho"></div>
-  <h3 id="total-carrinho">Total: R$ 0,00</h3>
-</div>
-
 <script>
-const produtos = [
-  {"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
-  {"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"}
-];
-let carrinho = {};
-let telefone = localStorage.getItem("telefone");
+/* ===== TELEFONE ===== */
+let telefoneDigits = localStorage.getItem("telefone_digits") || "";
+let telefoneDisplay = localStorage.getItem("telefone_display") || "";
 
-// --- TELEFONE ---
+/* Máscara de digitação */
+document.addEventListener("input", (e) => {
+  if (e.target.id === "telefone-input") {
+    let v = e.target.value.replace(/\D/g, "");
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length >= 7)
+      e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+    else if (v.length > 2)
+      e.target.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+    else e.target.value = v;
+  }
+});
+
 function renderTelefone() {
   const el = document.getElementById("telefone-container");
-  el.innerHTML = telefone
-    ? `<span>${telefone}</span><button onclick="editarTelefone()">✏️ Editar</button>`
-    : `<span style="color:#666;">Nenhum contato cadastrado</span>`;
+  if (!el) return;
+  el.innerHTML = telefoneDigits
+    ? `<span>${telefoneDisplay}</span><button onclick="editarTelefone()">✏️ Editar</button>`
+    : `<span style="color:#666;">Nenhum contato cadastrado</span> <button onclick="abrirPopup()">Cadastrar</button>`;
 }
-function abrirPopup() { document.getElementById("popup").classList.remove("hidden"); }
-function fecharPopup() { document.getElementById("popup").classList.add("hidden"); }
+
+function abrirPopup() {
+  const popup = document.getElementById("popup");
+  popup.classList.remove("hidden");
+  popup.style.display = "flex";
+  popup.setAttribute("aria-hidden", "false");
+  document.getElementById("telefone-input").focus();
+}
+
+function fecharPopup() {
+  const popup = document.getElementById("popup");
+  popup.classList.add("hidden");
+  popup.style.display = "none";
+  popup.setAttribute("aria-hidden", "true");
+}
+
 function salvarTelefone() {
-  const val = document.getElementById("telefone-input").value.trim();
-  if (val.length < 14) return alert("Número inválido! Use o formato (19) 99999-9999");
-  telefone = val;
-  localStorage.setItem("telefone", telefone);
+  const inp = document.getElementById("telefone-input");
+  const digits = inp.value.replace(/\D/g, "");
+  if (digits.length < 10) return alert("Número inválido! Use DDD + celular.");
+
+  const ddd = digits.slice(0, 2);
+  const corpo = digits.slice(2);
+  const exib = corpo.length === 8
+    ? `(${ddd}) ${corpo.slice(0, 4)}-${corpo.slice(4)}`
+    : `(${ddd}) ${corpo.slice(0, 5)}-${corpo.slice(5)}`;
+
+  telefoneDigits = digits;
+  telefoneDisplay = exib;
+  localStorage.setItem("telefone_digits", telefoneDigits);
+  localStorage.setItem("telefone_display", telefoneDisplay);
   fecharPopup();
   renderTelefone();
 }
+
 function editarTelefone() {
-  telefone = null;
-  localStorage.removeItem("telefone");
+  telefoneDigits = "";
+  telefoneDisplay = "";
+  localStorage.removeItem("telefone_digits");
+  localStorage.removeItem("telefone_display");
   abrirPopup();
 }
-document.addEventListener("input", e=>{
-  if(e.target.id==="telefone-input"){
-    let v=e.target.value.replace(/\D/g,"");
-    if(v.length>11)v=v.slice(0,11);
-    if(v.length>6)e.target.value=`(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
-    else if(v.length>2)e.target.value=`(${v.slice(0,2)}) ${v.slice(2)}`;
-    else e.target.value=v;
-  }
+
+/* Evento seguro */
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnSalvarContato").addEventListener("click", salvarTelefone);
+  renderTelefone();
+  if (!telefoneDigits) abrirPopup();
 });
-if(!telefone) abrirPopup();
-renderTelefone();
+</script>
+
 
 // --- PRODUTOS / CARRINHO ---
 function mostrarProdutos(marca){
@@ -283,4 +306,5 @@ function enviarWhatsApp(){
 </script>
 </body>
 </html>
+
 
