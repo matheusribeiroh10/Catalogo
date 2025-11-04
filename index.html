@@ -9,7 +9,6 @@ body {font-family: Arial, sans-serif; margin:0; background:#f7f7f7; text-align:c
 header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weight:bold;
         position:sticky; top:0; z-index:10; display:flex; justify-content:space-between;
         align-items:center;}
-/* ==== DESTACAR VERSÃO ==== */
 #versao { background:#ffcc00; color:#000; font-weight:bold; padding:4px 8px; border-radius:8px; font-size:13px; border:1px solid #333; }
 #total {font-size:15px; font-weight:bold;}
 #marcas-container {display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:10px;}
@@ -32,7 +31,8 @@ header {background:#2b7bba; color:white; padding:10px; font-size:18px; font-weig
 .qtd-container input { width:40px; text-align:center; margin:0 5px; border:1px solid #ccc; border-radius:6px; }
 
 button#voltar { background:#e74c3c; color:white; border:none; padding:8px 12px; font-size:14px; border-radius:8px; cursor:pointer; }
-#btnCarrinho { background:white; color:#2b7bba; border:2px solid #2b7bba; font-size:16px; padding:10px 18px; border-radius:10px; font-weight:bold; cursor:pointer; }
+#btnCarrinho, #btnEnviarPedido { background:white; color:#2b7bba; border:2px solid #2b7bba; font-size:16px; padding:10px 18px; border-radius:10px; font-weight:bold; cursor:pointer; }
+#btnEnviarPedido { display:none; background:#25d366; color:white; border:none; }
 
 #tela-carrinho { padding:15px; }
 .carrinho-item { background:white; border-radius:10px; margin:8px auto; padding:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); max-width:700px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
@@ -50,11 +50,11 @@ button#voltar { background:#e74c3c; color:white; border:none; padding:8px 12px; 
 <body>
 
 <header>
-  <!-- ==== ALTERE AQUI A VERSÃO QUANDO QUISER ==== -->
-  <span id="versao">v1.8</span>
+  <span id="versao">v1.9</span>
   <button id="voltar" onclick="mostrarMarcas()">🔙 Marcas</button>
   <div>Catálogo Digital<br><span id="total">Total: R$ 0,00</span></div>
   <button id="btnCarrinho" onclick="mostrarCarrinho()">🛒 Carrinho</button>
+  <button id="btnEnviarPedido" onclick="enviarWhatsApp()">📩 Enviar Pedido</button>
 </header>
 
 <!-- TELA 1: MARCAS -->
@@ -101,341 +101,24 @@ button#voltar { background:#e74c3c; color:white; border:none; padding:8px 12px; 
 </div>
 
 <script>
-/* ====== DADOS DE EXEMPLO ====== */
-const produtos = [
-{"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"},
-{"Código":"64","descricao":"Danette Branco 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/GCbUBfn.png"},
-{"Código":"142","descricao":"Danette Bd 540G Choc.","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/1Xguy2c.png"},
-{"Código":"143","descricao":"Danette Bd 540G Branco","marca":"Danone","valor":74.4,"imagem":"https://imgur.com/RDUQAqa.png"},
-{"Código":"45","descricao":"Danoninho MOR","marca":"Danone","valor":118.8,"imagem":"https://imgur.com/D0pQUZg.png"},
-{"Código":"49","descricao":"Danoninho Multi","marca":"Danone","valor":118.8,"imagem":"https://imgur.com/bY6Gax8.png"},
-{"Código":"126","descricao":"Danoninho Levar","marca":"Danone","valor":45,"imagem":"https://imgur.com/xi1IES3.png"},
-{"Código":"127","descricao":"Dan Levar Mor Ban","marca":"Danone","valor":45,"imagem":"https://imgur.com/ov9LnqT.png"},
-{"Código":"138","descricao":"Levar Ice Mix Mor 70G","marca":"Danone","valor":36,"imagem":"https://imgur.com/CP08KEj.png"},
-{"Código":"335","descricao":"Polpa Kids Mor C/1","marca":"Danone","valor":67.5,"imagem":"https://imgur.com/bkoRBCZ.png"},
-{"Código":"336","descricao":"Polpa Kids Mçã/Ban","marca":"Danone","valor":67.5,"imagem":"https://imgur.com/wFnxfZk.png"},
-{"Código":"1032","descricao":"Polpa Mor Dan","marca":"Danone","valor":60,"imagem":"https://imgur.com/r7XlbIP.png"},
-{"Código":"1033","descricao":"Polpa Mix Frutas Dan","marca":"Danone","valor":60,"imagem":"https://imgur.com/dV5xInC.png"},
-{"Código":"960","descricao":"GFAO Kids Liq. Mor 800G","marca":"Danone","valor":129,"imagem":"https://imgur.com/9CCyS53.png"},
-{"Código":"962","descricao":"GFAO Kids Liq. B/Ma 800G","marca":"Danone","valor":0,"imagem":"https://imgur.com/RSygz3r.png"},
-{"Código":"315","descricao":"Gfão Activ Aveia 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/4e0ws86.png"},
-{"Código":"299","descricao":"Gfão Activ Mor 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/HQ1z3NR.png"},
-{"Código":"103","descricao":"Gfão Activ Ameixa 800G","marca":"Danone","valor":139.5,"imagem":"https://imgur.com/YTO8P7F.png"},
-{"Código":"183","descricao":"Act Café Quinoa Fts Verm","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/emM1mz6.png"},
-{"Código":"1181","descricao":"Act Café M. Lin Mor","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/RFyUk1F.png"},
-{"Código":"169","descricao":"Act Café M Am/Ma","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/rxUGmRW.png"},
-{"Código":"189","descricao":"Activ Mor 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/uX3dsRg.png"},
-{"Código":"188","descricao":"Activ Ameixa 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/yfwNaRy.png"},
-{"Código":"190","descricao":"Activ Mamão 510G","marca":"Danone","valor":76,"imagem":"https://imgur.com/Z6OwkVQ.png"},
-{"Código":"591","descricao":"Natur Dan Integral","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/CqW0z4r.png"},
-{"Código":"592","descricao":"Natur Dan Lar Cen Mel","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/rpPoHzk.png"},
-{"Código":"593","descricao":"Natur Dan Mel","marca":"Danone","valor":55.8,"imagem":"https://imgur.com/q0TqBHE.png"},
-{"Código":"257","descricao":"Grego Light Or Mor 510G","marca":"Danone","valor":84.8,"imagem":"https://imgur.com/8bCw7Bc.png"},
-{"Código":"254","descricao":"Grego Or Ftas Verm 510G","marca":"Danone","valor":81.6,"imagem":"https://imgur.com/JHucpl7.png"},
-{"Código":"118","descricao":"Corpus 540G Mor","marca":"Danone","valor":67.04,"imagem":"https://imgur.com/40vrgxG.png"},
-{"Código":"205","descricao":"Yopro Choc. Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/RY5oBZz.png"},
-{"Código":"214","descricao":"Yopro Mor 24","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/4eegrWX.png"},
-{"Código":"209","descricao":"Yopro Coco/B Doce","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/QOkbtfW.png"},
-{"Código":"217","descricao":"Yopro Banana Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/4LSkkFE.png"},
-{"Código":"242","descricao":"Yopro HAVANNA Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/sLpK3CU.png"},
-{"Código":"244","descricao":"Yopro BAUNILHA Uht 250Ml","marca":"Danone","valor":160.8,"imagem":"https://imgur.com/OPCOexl.png"},
-{"Código":"2494","descricao":"FTP Torta Choc.","marca":"Frutap","valor":30,"imagem":"https://imgur.com/5Sflomp.png"},
-{"Código":"2495","descricao":"FTP Torta MOR","marca":"Frutap","valor":30,"imagem":"https://imgur.com/8ayNCU9.png"},
-{"Código":"2551","descricao":"FTP Torta Mrcujá","marca":"Frutap","valor":30,"imagem":"https://imgur.com/uRmZKrO.png"},
-{"Código":"2496","descricao":"FTP Torta Banoffee","marca":"Frutap","valor":30,"imagem":"https://imgur.com/17qeRNS.png"},
-{"Código":"10","descricao":"Sobr Branca Ftap","marca":"Frutap","valor":31.2,"imagem":"https://imgur.com/GWnrQRb.png"},
-{"Código":"4","descricao":"Sobr. Choc. Bnate","marca":"Frutap","valor":25.2,"imagem":"https://imgur.com/FF0HoLT.png"},
-{"Código":"1760","descricao":"Flan Bnate Mor","marca":"Frutap","valor":26.16,"imagem":"https://imgur.com/toZfCaQ.png"},
-{"Código":"297","descricao":"Flan Bonate Baunilha","marca":"Frutap","valor":26.16,"imagem":"https://imgur.com/d60xVti.png"},
-{"Código":"27","descricao":"Flan Ftap Baunilha","marca":"Frutap","valor":31.2,"imagem":"https://imgur.com/VvB08pk.png"},
-{"Código":"28","descricao":"FLAN FRUTAP MOR","marca":"Frutap","valor":31.2,"imagem":"https://imgur.com/UyUB0e4.png"},
-{"Código":"31","descricao":"Grego Trad Ftap","marca":"Frutap","valor":39.6,"imagem":"https://imgur.com/h8Wqtes.png"},
-{"Código":"33","descricao":"Grego Mor Ftap","marca":"Frutap","valor":39.6,"imagem":"https://imgur.com/6c1aOeh.png"},
-{"Código":"34","descricao":"Grego Fr. Verm Ftap","marca":"Frutap","valor":39.6,"imagem":"https://imgur.com/am4vC84.png"},
-{"Código":"2490","descricao":"FTP Pedaço MOR","marca":"Frutap","valor":33.36,"imagem":"https://imgur.com/kBcqStA.png"},
-{"Código":"2491","descricao":"FTP Pedaço FTS Vermelhas","marca":"Frutap","valor":33.36,"imagem":"https://imgur.com/UgapEcG.png"},
-{"Código":"400","descricao":"Pudim Ftap 24X100G","marca":"Frutap","valor":52.8,"imagem":"https://imgur.com/S2YVaxf.png"},
-{"Código":"164","descricao":"Bnate Cpo Confeito","marca":"Frutap","valor":66,"imagem":"https://imgur.com/Z4ht5Ak.png"},
-{"Código":"38","descricao":"Bicamada Ftlac C/24","marca":"Frutap","valor":33.36,"imagem":"https://imgur.com/iiAkkgH.png"},
-{"Código":"1073","descricao":"Achocolatado Ftap 27 Un","marca":"Frutap","valor":35.1,"imagem":"https://imgur.com/RCPSLqA.png"},
-{"Código":"1350","descricao":"Polpa Ftlac 360G","marca":"Frutap","valor":33.48,"imagem":"https://imgur.com/9DqAPiM.png"},
-{"Código":"920","descricao":"Frutilac Polpa MOR/COCO","marca":"Frutap","valor":37.56,"imagem":"https://imgur.com/vjdZ0KU.png"},
-{"Código":"65","descricao":"Polpa Ftlac Mor 480","marca":"Frutap","valor":37.56,"imagem":"https://imgur.com/FqsWisL.png"},
-{"Código":"52","descricao":"Polpa Ftlac Fts 480G","marca":"Frutap","valor":37.56,"imagem":"https://imgur.com/r3VTgFS.png"},
-{"Código":"8625","descricao":"Polpa Patati Patata 360G","marca":"Frutap","valor":43.2,"imagem":"https://imgur.com/0GyHPA1.png"},
-{"Código":"4017","descricao":"Frutapinho Petit Choc","marca":"Frutap","valor":56.28,"imagem":"https://imgur.com/6AOECug.png"},
-{"Código":"1056","descricao":"Petit Ftap Mor","marca":"Frutap","valor":57.6,"imagem":"https://imgur.com/ulVJyfe.png"},
-{"Código":"37","descricao":"Petit Ftap Ban/Maça","marca":"Frutap","valor":57.6,"imagem":"https://imgur.com/pva24tq.png"},
-{"Código":"42","descricao":"Gfinha Ftlac Mor","marca":"Frutap","valor":30.96,"imagem":"https://imgur.com/xgyQWul.png"},
-{"Código":"44","descricao":"Gfinha Ftlac Frutas VERM","marca":"Frutap","valor":30.96,"imagem":"https://imgur.com/tt3lOYr.png"},
-{"Código":"43","descricao":"Gfinha Ftlac S.Fruts","marca":"Frutap","valor":30.96,"imagem":"https://imgur.com/f588HJQ.png"},
-{"Código":"70","descricao":"Ferm 170G Trad. Ftap","marca":"Frutap","valor":38.4,"imagem":"https://imgur.com/mSZQjF6.png"},
-{"Código":"76","descricao":"Ferm 170G Uva Ftap","marca":"Frutap","valor":38.4,"imagem":"https://imgur.com/RL6aCsr.png"},
-{"Código":"71","descricao":"Fer 170G Laran Ftap","marca":"Frutap","valor":38.4,"imagem":"https://imgur.com/hM0Gwbc.png"},
-{"Código":"73","descricao":"Fer 170G MOR Ftap","marca":"Frutap","valor":38.4,"imagem":"https://imgur.com/aEPBhKR.png"},
-{"Código":"187","descricao":"Bnate Ferm 130G","marca":"Frutap","valor":30,"imagem":"https://imgur.com/5HbEbdh.png"},
-{"Código":"460","descricao":"Cx FERMENTADO Patati Patata","marca":"Frutap","valor":51.6,"imagem":"https://imgur.com/DSdmbZB.png"},
-{"Código":"41","descricao":"Gfão Ferm Ftap 850","marca":"Frutap","valor":90,"imagem":"https://imgur.com/0QchvYM.png"},
-{"Código":"98","descricao":"Gfão IOG Mor 900 Ftp","marca":"Frutap","valor":83.88,"imagem":"https://imgur.com/vMHKVwk.png"},
-{"Código":"82","descricao":"Gfão Açai/Ban Ftap","marca":"Frutap","valor":83.88,"imagem":"https://imgur.com/xQwXimW.png"},
-{"Código":"75","descricao":"Gfão Ftlac 850 Mor","marca":"Frutap","valor":71.88,"imagem":"https://imgur.com/BHFUkr6.png"},
-{"Código":"77","descricao":"Gfão 1,2 K Ftlac Mor","marca":"Frutap","valor":47.7,"imagem":"https://imgur.com/b8VujY2.png"},
-{"Código":"2015","descricao":"Natural Trad. Ftap","marca":"Frutap","valor":46.8,"imagem":"https://imgur.com/3b7hHul.png"},
-{"Código":"210","descricao":"Requeijão Ftap Amido","marca":"Frutap","valor":111.6,"imagem":"https://imgur.com/DgZjcB8.png"},
-{"Código":"322","descricao":"Frutilac Requeijão 175G","marca":"Frutap","valor":95.76,"imagem":"https://imgur.com/x56UK3W.png"},
-{"Código":"324","descricao":"Frutap Pouch Petit Mor","marca":"Frutap","valor":24.6,"imagem":"https://imgur.com/xS131jx.png"},
-{"Código":"386","descricao":"Frutap Pouch Fermentado","marca":"Frutap","valor":24.6,"imagem":"https://imgur.com/ZrSREHE.png"},
-{"Código":"300","descricao":"Pudim Rebeka","marca":"Rebeka","valor":61.2,"imagem":"https://imgur.com/xSIQRUw.png"},
-{"Código":"1840","descricao":"Rebeka Brigadeirão 80g","marca":"Rebeka","valor":90,"imagem":"https://imgur.com/ULVzcjv.png"},
-{"Código":"6002","descricao":"Krem Gfinha MOR 130g","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/Sb4AVNr.png"},
-{"Código":"6003","descricao":"Krem Gfinha Coco","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/QgukbX8.png"},
-{"Código":"6009","descricao":"Krem Gfinha Ameixa","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/6J5Dbk5.png"},
-{"Código":"6008","descricao":"Krem Gfinha Sal Frutas","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/9a08Qfb.png"},
-{"Código":"6007","descricao":"Krem Gfinha Frts Verm 130g","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/nNA6oFt.png"},
-{"Código":"390","descricao":"Kremoso Saco MOR","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/nA7R04k.png"},
-{"Código":"391","descricao":"Kremoso Saco Frutas Verm","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/NWieFlH.png"},
-{"Código":"389","descricao":"Kremoso Saco Ameixa 550G","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/M5MFO9P.png"},
-{"Código":"392","descricao":"Kremoso Saco Salada Fr","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/vwzG894.png"},
-{"Código":"393","descricao":"Kremoso Saco Coco","marca":"Kremoso","valor":20,"imagem":"https://imgur.com/Qzdwasc.png"},
-{"Código":"10100","descricao":"CHANDELLE Choc 360g","marca":"Nestlé","valor":120.96,"imagem":"https://imgur.com/fdiDG0A.png"},
-{"Código":"10003","descricao":"Chandelle Branco 360G","marca":"Nestlé","valor":120.96,"imagem":"https://imgur.com/72ol4JC.png"},
-{"Código":"10008","descricao":"Chamytinho 450G","marca":"Nestlé","valor":122.22,"imagem":"https://imgur.com/nrn4VmD.png"},
-{"Código":"8921","descricao":"Pão Visc. Trad","marca":"Bauducco","valor":42,"imagem":"https://imgur.com/gmVoQzz.png"},
-{"Código":"8922","descricao":"Pão BAUD. Integral","marca":"Bauducco","valor":45,"imagem":"https://imgur.com/MberfZi.png"},
-{"Código":"8934","descricao":"Pão Baud. Tradic.","marca":"Bauducco","valor":42,"imagem":"https://imgur.com/Szwjp1A.png"},
-{"Código":"8931","descricao":"Bolinho Roll Choc","marca":"Bauducco","valor":148.5,"imagem":"https://imgur.com/4DlQcgd.png"},
-{"Código":"8927","descricao":"Bol Duo Choc. 6X15","marca":"Bauducco","valor":135,"imagem":"https://imgur.com/j94mCRX.png"},
-{"Código":"8923","descricao":"Bolin Dupl Ch 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://imgur.com/JUv2bat.png"},
-{"Código":"8926","descricao":"Bol Baun C/Mor 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://imgur.com/e8n2iZV.png"},
-{"Código":"8928","descricao":"Bol Bau Choc.9X16","marca":"Bauducco","valor":223.2,"imagem":"https://imgur.com/p3OQ9bb.png"},
-{"Código":"8935","descricao":"Bolin GOTAS Ch 9X16","marca":"Bauducco","valor":223.2,"imagem":"https://imgur.com/qy3IuSa.png"},
-{"Código":"5982","descricao":"Ruflle Churras 32GX56","marca":"Elma Chips","valor":167.44,"imagem":"https://imgur.com/0gL9At3.png"},
-{"Código":"8967","descricao":"Ruflles Orig. 32Gx56","marca":"Elma Chips","valor":167.44,"imagem":"https://imgur.com/Ny85FKN.png"},
-{"Código":"5981","descricao":"Ruflles Cebola Salsa 32GX56","marca":"Elma Chips","valor":167.44,"imagem":"https://imgur.com/UBOoZvT.png"},
-{"Código":"8960","descricao":"Fandan Presunto 48X37G","marca":"Elma Chips","valor":108,"imagem":"https://imgur.com/qWcsx7V.png"},
-{"Código":"8962","descricao":"Fandangos Queijo 48X37G","marca":"Elma Chips","valor":108,"imagem":"https://imgur.com/sdanLzU.png"},
-{"Código":"8957","descricao":"Cheetos Onda 45G C/48","marca":"Elma Chips","valor":151.2,"imagem":"https://imgur.com/LKzF1ya.png"},
-{"Código":"8956","descricao":"Cheetos Lua C/48","marca":"Elma Chips","valor":151.2,"imagem":"https://imgur.com/JJBrziQ.png"},
-{"Código":"8997","descricao":"Cheetos Mix 41Gx48","marca":"Elma Chips","valor":151.2,"imagem":"https://imgur.com/gxUDIcH.png"},
-{"Código":"8998","descricao":"Cheetos Bola De Queijo","marca":"Elma Chips","valor":151.2,"imagem":"https://imgur.com/GnCgfVI.png"},
-{"Código":"8958","descricao":"Doritos Nacho 58X37G","marca":"Elma Chips","valor":214.6,"imagem":"https://imgur.com/NicSAAt.png"},
-{"Código":"8959","descricao":"Cebolitos 48X36g","marca":"Elma Chips","valor":143.52,"imagem":"https://imgur.com/kba075d.png"},
-{"Código":"9004","descricao":"Baconzitos 31gX58","marca":"Elma Chips","valor":173.42,"imagem":"https://imgur.com/1y50EGo.png"},
-{"Código":"7871","descricao":"Torcida Costela 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/zpahR2n.png"},
-{"Código":"7705","descricao":"Torcida Pão Alho 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/J5Ept68.png"},
-{"Código":"8999","descricao":"Torcida Vinagrete 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/ADJjIHa.png"},
-{"Código":"7874","descricao":"Torcida Bacon 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/UIHKp3W.png"},
-{"Código":"7879","descricao":"Torcida Queijo 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/QNJZauJ.png"},
-{"Código":"7872","descricao":"Torcida Cebola 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/2LsgY2z.png"},
-{"Código":"7878","descricao":"Torcida Churras 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/2wAMk9N.png"},
-{"Código":"7870","descricao":"Torcida Pimenta 60Gx24","marca":"Elma Chips","valor":42.96,"imagem":"https://imgur.com/hyxgfMm.png"},
-{"Código":"1202","descricao":"Todynho C/27","marca":"Elma Chips","valor":68.58,"imagem":"https://imgur.com/eDlLiia.png"},
-{"Código":"868","descricao":"FTOP  50g Btatão PEQ Tradic","marca":"FRITOP","valor":57.6,"imagem":"https://imgur.com/poHpwZr.png"},
-{"Código":"874","descricao":"FTOP  Polvilho 180g Grande","marca":"FRITOP","valor":48.9,"imagem":"https://imgur.com/itDjZjY.png"},
-{"Código":"940","descricao":"FTOP  200g Grande Churras","marca":"FRITOP","valor":48.9,"imagem":"https://imgur.com/rqW4R4i.png"},
-{"Código":"935","descricao":"FTOP  200g Grande Ceb/Salsa","marca":"FRITOP","valor":48.9,"imagem":"https://imgur.com/errtf4d.png"},
-{"Código":"624","descricao":"SALG. FOFINHO Bacon 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/B8vP317.png"},
-{"Código":"625","descricao":"SALG. FOFINHO Cebola 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/0cctEwm.png"},
-{"Código":"629","descricao":"SALG. FOFINHO Churasco 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/R0H8wpG.png"},
-{"Código":"630","descricao":"SALG. FOFIN Costela Lim 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/NQP9OQb.png"},
-{"Código":"631","descricao":"SALG. FOFINHO Pizza 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/2Dp3hz9.png"},
-{"Código":"632","descricao":"SALG. FOFINHO Presunto 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/wCFb8GW.png"},
-{"Código":"635","descricao":"SALG. FOFINHO Queijo 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/pe4Ni3Y.png"},
-{"Código":"673","descricao":"SALG. FOFIN Requeijão 40g","marca":"Divinitos","valor":8.9,"imagem":"https://imgur.com/KVwmLqV.png"},
-{"Código":"4579","descricao":"Pipoca SAL Oz 60G C/ 10","marca":"Oz","valor":9.9,"imagem":"https://imgur.com/5hMMA8S.png"},
-{"Código":"4602","descricao":"Pipoca Caramel. Preta 50g","marca":"Oz","valor":9.9,"imagem":"https://imgur.com/VkumfGn.png"},
-{"Código":"4561","descricao":"Pipoca Doce Oz 60G C/ 10","marca":"Oz","valor":9.9,"imagem":"https://imgur.com/kTW2uqW.png"},
-{"Código":"8991","descricao":"Massa Lasanha Fardo C/ 10","marca":"Rei da Massa","valor":49.5,"imagem":"https://imgur.com/U9QyB9d.png"},
-{"Código":"8990","descricao":"Massa Nhoque Fardo C/ 10","marca":"Rei da Massa","valor":59.9,"imagem":"https://imgur.com/ccMgACL.png"},
-{"Código":"8992","descricao":"Massa Pastel Rolo 500G C/10","marca":"Rei da Massa","valor":44.5,"imagem":"https://imgur.com/GKF8Mxy.png"},
-{"Código":"8993","descricao":"Un Massa P. Disco 500G","marca":"Rei da Massa","valor":5.5,"imagem":"https://imgur.com/undefined.png"},
-{"Código":"8975","descricao":"Sacola Bca 30X40 - 1,2 Kilo","marca":"Sacola","valor":28,"imagem":"https://imgur.com/8fTI33w.png"},
-{"Código":"8970","descricao":"Sacola Verde 30X40 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://imgur.com/QflkHjL.png"},
-{"Código":"8971","descricao":"Sacola Verde 40X50 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://imgur.com/QflkHjL.png"},
-{"Código":"8972","descricao":"Sacola Verde 45X60 - 4 Kilo","marca":"Sacola","valor":48,"imagem":"https://imgur.com/QflkHjL.png"},
-];
+const produtos=[{"Código":"129","descricao":"Danette Chocol 360G","marca":"Danone","valor":82.56,"imagem":"https://imgur.com/CNshggM.png"}];
+let carrinho={},telefoneDigits=localStorage.getItem("telefone_digits")||"",telefoneDisplay=localStorage.getItem("telefone_display")||"";
 
-let carrinho = {};
-let telefoneDigits = localStorage.getItem("telefone_digits") || "";
-let telefoneDisplay = localStorage.getItem("telefone_display") || "";
+document.addEventListener("input",e=>{if(e.target.id==="telefone-input"){let v=e.target.value.replace(/\D/g,"");if(v.length>11)v=v.slice(0,11);if(v.length>=7)e.target.value=`(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;else if(v.length>2)e.target.value=`(${v.slice(0,2)}) ${v.slice(2)}`;else e.target.value=v}});
+function renderTelefone(){const el=document.getElementById("telefone-container");el.innerHTML=telefoneDigits?`<span>${telefoneDisplay}</span><button onclick="editarTelefone()">✏️ Editar</button>`:`<span style="color:#666;">Nenhum contato cadastrado</span> <button onclick="abrirPopup()">Cadastrar</button>`}
+function abrirPopup(){document.getElementById("popup").style.display="flex";}
+function fecharPopup(){document.getElementById("popup").style.display="none";}
+function salvarTelefone(){const inp=document.getElementById("telefone-input");const digits=inp.value.replace(/\D/g,"");if(digits.length<10)return alert("Número inválido! Use DDD + celular.");const ddd=digits.slice(0,2);const corpo=digits.slice(2);const exib=corpo.length===8?`(${ddd}) ${corpo.slice(0,4)}-${corpo.slice(4)}`:`(${ddd}) ${corpo.slice(0,5)}-${corpo.slice(5)}`;telefoneDigits=digits;telefoneDisplay=exib;localStorage.setItem("telefone_digits",telefoneDigits);localStorage.setItem("telefone_display",telefoneDisplay);fecharPopup();renderTelefone();}
+function editarTelefone(){localStorage.removeItem("telefone_digits");localStorage.removeItem("telefone_display");telefoneDigits="";telefoneDisplay="";abrirPopup();}
+document.addEventListener("DOMContentLoaded",()=>{document.getElementById("btnSalvarContato").addEventListener("click",salvarTelefone);renderTelefone();if(!telefoneDigits)abrirPopup();});
 
-/* Máscara de telefone */
-document.addEventListener("input", (e) => {
-  if (e.target.id === "telefone-input") {
-    let v = e.target.value.replace(/\D/g, "");
-    if (v.length > 11) v = v.slice(0, 11);
-    if (v.length >= 7)
-      e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
-    else if (v.length > 2)
-      e.target.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
-    else e.target.value = v;
-  }
-});
+function mostrarProdutos(marca){document.getElementById("tela-marcas").classList.add("hidden");document.getElementById("tela-carrinho").classList.add("hidden");document.getElementById("tela-produtos").classList.remove("hidden");document.getElementById("btnCarrinho").style.display="inline-block";document.getElementById("btnEnviarPedido").style.display="none";document.getElementById("titulo-marca").textContent=marca==="Tudo"?"Todos os Produtos":"Marca: "+marca;const container=document.getElementById("produtos-container");container.innerHTML="";produtos.filter(p=>marca==="Tudo"||p.marca===marca).forEach(prod=>{const imgSrc=prod.imagem&&prod.imagem.trim()!==""?prod.imagem:"https://i.imgur.com/jzjHhHG.png";container.innerHTML+=`<div class="produto"><img src="${imgSrc}" alt="${prod.descricao}"><h4>${prod.descricao}</h4><small>(${prod.Código})</small><p><b>R$ ${prod.valor.toFixed(2)}</b></p><div class="qtd-container"><button onclick="alterarQtd('${prod.Código}', -1)">-</button><input id="qtd-${prod.Código}" value="${carrinho[prod.Código]?.qtd||0}"><button onclick="alterarQtd('${prod.Código}', 1)">+</button></div></div>`});}
 
-/* Renderização do telefone */
-function renderTelefone() {
-  const el = document.getElementById("telefone-container");
-  el.innerHTML = telefoneDigits
-    ? `<span>${telefoneDisplay}</span><button onclick="editarTelefone()">✏️ Editar</button>`
-    : `<span style="color:#666;">Nenhum contato cadastrado</span> <button onclick="abrirPopup()">Cadastrar</button>`;
-}
-
-/* Controle do popup */
-function abrirPopup() {
-  const popup = document.getElementById("popup");
-  popup.style.display = "flex";
-}
-function fecharPopup() {
-  const popup = document.getElementById("popup");
-  popup.style.display = "none";
-}
-
-/* Salvar telefone */
-function salvarTelefone() {
-  const inp = document.getElementById("telefone-input");
-  const digits = inp.value.replace(/\D/g, "");
-  if (digits.length < 10) return alert("Número inválido! Use DDD + celular.");
-
-  const ddd = digits.slice(0, 2);
-  const corpo = digits.slice(2);
-  const exib = corpo.length === 8
-    ? `(${ddd}) ${corpo.slice(0,4)}-${corpo.slice(4)}`
-    : `(${ddd}) ${corpo.slice(0,5)}-${corpo.slice(5)}`;
-
-  telefoneDigits = digits;
-  telefoneDisplay = exib;
-  localStorage.setItem("telefone_digits", telefoneDigits);
-  localStorage.setItem("telefone_display", telefoneDisplay);
-  fecharPopup();
-  renderTelefone();
-}
-
-/* Editar telefone */
-function editarTelefone() {
-  localStorage.removeItem("telefone_digits");
-  localStorage.removeItem("telefone_display");
-  telefoneDigits = "";
-  telefoneDisplay = "";
-  abrirPopup();
-}
-
-/* Inicialização */
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btnSalvarContato").addEventListener("click", salvarTelefone);
-  renderTelefone();
-  if (!telefoneDigits) abrirPopup();
-});
-
-/* ====== PRODUTOS E CARRINHO ====== */
-function mostrarProdutos(marca) {
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.remove("hidden");
-  document.getElementById("titulo-marca").textContent =
-    marca === "Tudo" ? "Todos os Produtos" : "Marca: " + marca;
-
-  const container = document.getElementById("produtos-container");
-  container.innerHTML = "";
-  produtos.filter(p => marca === "Tudo" || p.marca === marca).forEach(prod => {
-    container.innerHTML += `
-      <div class="produto">
-        <img src="${prod.imagem}" alt="${prod.descricao}">
-        <h4>${prod.descricao}</h4>
-        <small>(${prod.Código})</small>
-        <p><b>R$ ${prod.valor.toFixed(2)}</b></p>
-        <div class="qtd-container">
-          <button onclick="alterarQtd('${prod.Código}', -1)">-</button>
-          <input id="qtd-${prod.Código}" value="${carrinho[prod.Código]?.qtd || 0}">
-          <button onclick="alterarQtd('${prod.Código}', 1)">+</button>
-        </div>
-      </div>`;
-  });
-}
-
-function mostrarMarcas() {
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.add("hidden");
-  document.getElementById("tela-marcas").classList.remove("hidden");
-}
-
-function mostrarCarrinho() {
-  document.getElementById("tela-marcas").classList.add("hidden");
-  document.getElementById("tela-produtos").classList.add("hidden");
-  document.getElementById("tela-carrinho").classList.remove("hidden");
-
-  const container = document.getElementById("itens-carrinho");
-  container.innerHTML = "";
-
-  if (Object.keys(carrinho).length === 0) {
-    container.innerHTML = "<p>Seu carrinho está vazio 🛒</p>";
-    document.getElementById("total-carrinho").textContent = "Total: R$ 0,00";
-    return;
-  }
-
-  for (let c in carrinho) {
-    const p = carrinho[c];
-    container.innerHTML += `
-      <div class="carrinho-item">
-        <img src="${p.imagem}" alt="${p.descricao}">
-        <div style="flex:1; text-align:left;">
-          <b>${p.descricao}</b><br>
-          <small>(${p.Código})</small><br>
-          <span>R$ ${p.valor.toFixed(2)}</span>
-        </div>
-        <div class="qtd-container">
-          <button onclick="alterarQtd('${p.Código}', -1, true)">-</button>
-          <input id="qtd-carrinho-${p.Código}" value="${p.qtd}">
-          <button onclick="alterarQtd('${p.Código}', 1, true)">+</button>
-        </div>
-      </div>`;
-  }
-  atualizarTotal();
-}
-
-function alterarQtd(codigo, delta, dentroCarrinho = false) {
-  const prod = produtos.find(p => p.Código === codigo);
-  if (!prod) return;
-
-  let qtdAtual = carrinho[codigo]?.qtd || 0;
-  let novaQtd = qtdAtual + delta;
-  if (novaQtd < 0) novaQtd = 0;
-
-  if (novaQtd > 0) carrinho[codigo] = {...prod, qtd: novaQtd};
-  else delete carrinho[codigo];
-
-  const input1 = document.getElementById(`qtd-${codigo}`);
-  const input2 = document.getElementById(`qtd-carrinho-${codigo}`);
-  if (input1) input1.value = novaQtd;
-  if (input2) input2.value = novaQtd;
-
-  atualizarTotal();
-}
-
-function atualizarTotal() {
-  let total = 0;
-  for (let c in carrinho) total += carrinho[c].valor * carrinho[c].qtd;
-  document.getElementById("total").innerText = "Total: R$ " + total.toFixed(2);
-  const totalCarrinho = document.getElementById("total-carrinho");
-  if (totalCarrinho) totalCarrinho.innerText = "Total: R$ " + total.toFixed(2);
-}
-
-/* Enviar WhatsApp */
-function enviarWhatsApp() {
-  if (Object.keys(carrinho).length === 0) return alert("Nenhum item no pedido!");
-  let msg = "🛒 *Pedido:*%0A";
-  for (let c in carrinho) {
-    const p = carrinho[c];
-    msg += `• ${p.descricao} (${p.Código}) - ${p.qtd} un.%0A`;
-  }
-  const total = Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);
-  msg += `%0A💰 *Total:* R$ ${total.toFixed(2)}`;
-  if (telefoneDisplay) msg += `%0A📞 *Contato:* ${telefoneDisplay}`;
-  window.open("https://wa.me/5519992394899?text=" + msg, "_blank");
-}
+function mostrarMarcas(){document.getElementById("tela-produtos").classList.add("hidden");document.getElementById("tela-carrinho").classList.add("hidden");document.getElementById("tela-marcas").classList.remove("hidden");document.getElementById("btnCarrinho").style.display="inline-block";document.getElementById("btnEnviarPedido").style.display="none";}
+function mostrarCarrinho(){document.getElementById("tela-marcas").classList.add("hidden");document.getElementById("tela-produtos").classList.add("hidden");document.getElementById("tela-carrinho").classList.remove("hidden");document.getElementById("btnCarrinho").style.display="none";document.getElementById("btnEnviarPedido").style.display="inline-block";const container=document.getElementById("itens-carrinho");container.innerHTML="";if(Object.keys(carrinho).length===0){container.innerHTML="<p>Seu carrinho está vazio 🛒</p>";document.getElementById("total-carrinho").textContent="Total: R$ 0,00";return;}for(let c in carrinho){const p=carrinho[c];container.innerHTML+=`<div class="carrinho-item"><img src="${p.imagem}" alt="${p.descricao}"><div style="flex:1; text-align:left;"><b>${p.descricao}</b><br><small>(${p.Código})</small><br><span>R$ ${p.valor.toFixed(2)}</span></div><div class="qtd-container"><button onclick="alterarQtd('${p.Código}', -1, true)">-</button><input id="qtd-carrinho-${p.Código}" value="${p.qtd}"><button onclick="alterarQtd('${p.Código}', 1, true)">+</button></div></div>`;}atualizarTotal();}
+function alterarQtd(codigo,delta,dentroCarrinho=false){const prod=produtos.find(p=>p.Código===codigo);if(!prod)return;let qtdAtual=carrinho[codigo]?.qtd||0;let novaQtd=qtdAtual+delta;if(novaQtd<0)novaQtd=0;if(novaQtd>0)carrinho[codigo]={...prod,qtd:novaQtd};else delete carrinho[codigo];const i1=document.getElementById(`qtd-${codigo}`);const i2=document.getElementById(`qtd-carrinho-${codigo}`);if(i1)i1.value=novaQtd;if(i2)i2.value=novaQtd;atualizarTotal();}
+function atualizarTotal(){let total=0;for(let c in carrinho)total+=carrinho[c].valor*carrinho[c].qtd;document.getElementById("total").innerText="Total: R$ "+total.toFixed(2);const t=document.getElementById("total-carrinho");if(t)t.innerText="Total: R$ "+total.toFixed(2);}
+function enviarWhatsApp(){if(Object.keys(carrinho).length===0)return alert("Nenhum item no pedido!");let msg="🛒 *Pedido:*%0A";for(let c in carrinho){const p=carrinho[c];msg+=`• ${p.descricao} (${p.Código}) - ${p.qtd} un.%0A`;}const total=Object.values(carrinho).reduce((a,b)=>a+b.valor*b.qtd,0);msg+=`%0A💰 *Total:* R$ ${total.toFixed(2)}`;if(telefoneDisplay)msg+=`%0A📞 *Contato:* ${telefoneDisplay}`;window.open("https://wa.me/5519992394899?text="+msg,"_blank");}
 </script>
 </body>
 </html>
-
-
-
-
